@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PAIX 予約ページ</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Hiragino Sans', sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; color: #333; line-height: 1.5; }
+    header { background-color: #2C2C2C; padding: 1rem; text-align: center; border-bottom: 3px solid #B8956A; position: sticky; top: 0; z-index: 100; }
+    header h1 { margin: 0; font-size: 1.3rem; color: #FFFFFF; }
+    .menu-section, .calendar-section, .customer-section { background: #FFFFFF; padding: 1rem; margin-bottom: 0.5rem; }
+    .menu-section h2, .calendar-section h2, .customer-section h2 { font-size: 1.1rem; margin-bottom: 0.75rem; color: #333; }
+    .form-group { margin-bottom: 1rem; }
+    label { font-weight: 600; display: block; margin-bottom: 0.5rem; color: #333; font-size: 0.95rem; }
+    select, input { width: 100%; padding: 0.75rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 0.5rem; background-color: #FAFAFA; color: #333; font-size: 1rem; -webkit-appearance: none; }
+    select { background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 12 12'%3E%3Cpath d='M6 9L1 4h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2.5rem; }
+    h3 { color: #555; margin-top: 1rem; margin-bottom: 0.5rem; font-size: 0.9rem; line-height: 1.5; }
+    .total-duration { font-size: 1.1rem; color: #B8956A; font-weight: bold; margin: 0.5rem 0; }
+    .week-navigation { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.5rem; }
+    .nav-button { background: linear-gradient(135deg, #B8956A 0%, #A68B5B 100%); border: none; color: #FFFFFF; font-size: 0.9rem; font-weight: 600; cursor: pointer; padding: 0.75rem 1rem; border-radius: 8px; transition: all 0.2s; min-width: 100px; }
+    .nav-button:hover:not(:disabled) { background: linear-gradient(135deg, #A68B5B 0%, #957A4A 100%); }
+    .nav-button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .current-month { font-size: 1.1rem; font-weight: 600; color: #333; text-align: center; flex: 1; }
+    .schedule-wrapper { overflow-x: hidden; overflow-y: auto; max-height: 450px; border: 2px solid #B8956A; border-radius: 8px; background-color: #FFFFFF; }
+    .schedule-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .schedule-table th, .schedule-table td { border: 1px solid #e0e0e0; text-align: center; padding: 0.5rem 0.2rem; }
+    .schedule-table thead th { background-color: #FAFAFA; font-weight: 600; position: sticky; top: 0; z-index: 10; border-bottom: 2px solid #B8956A; }
+    .schedule-table thead th:first-child { position: sticky; left: 0; top: 0; z-index: 20; background-color: #FFFFFF; min-width: 60px; border-right: 2px solid #B8956A; }
+    .date-header { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+    .date-number { font-size: 1.2rem; font-weight: bold; }
+    .date-day { font-size: 0.85rem; }
+    .date-day.sunday { color: #777; }
+    .date-day.saturday { color: #3498DB; }
+    .time-cell { background-color: #FAFAFA; font-size: 0.9rem; font-weight: 500; color: #666; position: sticky; left: 0; z-index: 5; min-width: 60px; border-right: 2px solid #B8956A; }
+    .slot-cell { cursor: pointer; transition: background-color 0.15s; padding: 0; height: 45px; }
+    .slot-cell.available { background-color: #FFFFFF; }
+    .slot-cell.available:hover { background-color: #FFF5F8; }
+    .slot-cell.unavailable { background-color: #F5F5F5; cursor: not-allowed; }
+    .slot-cell.selected { background-color: #B8956A; }
+    .slot-icon { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 1.5rem; }
+    .slot-icon.available-icon { color: #B8956A; }
+    .slot-icon.unavailable-icon { color: #CCC; }
+    .slot-icon.selected-icon { color: #FFFFFF; }
+    .required { color: #777; margin-left: 0.25rem; }
+    .reserve-button { width: calc(100% - 2rem); margin: 1rem; padding: 1rem; background-color: #B8956A; color: #FFFFFF; border: none; border-radius: 0.5rem; font-size: 1.1rem; font-weight: 600; cursor: pointer; position: fixed; bottom: 0; left: 0; right: 0; z-index: 99; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+    .reserve-button:hover:not(:disabled) { background-color: #A68B5B; }
+    .reserve-button:disabled { background-color: #CCC; cursor: not-allowed; }
+    .button-spacer { height: 80px; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; overflow-y: auto; }
+    .modal-content { background-color: #FFFFFF; margin: 10% auto; padding: 1.5rem; width: 90%; max-width: 500px; border-radius: 0.75rem; }
+    .modal-header { margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid #B8956A; }
+    .modal-header h2 { margin: 0; color: #333; font-size: 1.3rem; }
+    .confirmation-details p { margin: 0.75rem 0; font-size: 1rem; }
+    .confirmation-details ul { margin: 0.5rem 0 0.5rem 1.5rem; }
+    .shaving-notice { color: #777; font-weight: bold; margin-top: 1rem; padding: 1rem; background-color: #F5F5F5; border-radius: 0.5rem; }
+    .modal-buttons { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .modal-buttons button { flex: 1; padding: 0.875rem; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; }
+    .cancel-button { background-color: #999; color: #FFFFFF; }
+    .confirm-button { background-color: #B8956A; color: #FFFFFF; }
+    .complete-message { text-align: center; padding: 2rem 0; }
+    .return-button { display: block; width: 200px; margin: 1.5rem auto 0; padding: 0.875rem; background-color: #B8956A; color: #FFFFFF; border: none; border-radius: 0.5rem; font-size: 1rem; cursor: pointer; }
+    .calendar-button { padding: 0.875rem; border: none; border-radius: 0.5rem; font-size: 1rem; cursor: pointer; color: #FFFFFF; display: none; background-color: #3498DB; }
+    #completionDetails { text-align: left; background-color: #f9f9f9; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
+    #loadingOverlay { display: none; position: fixed; z-index: 3000; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); }
+    .spinner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; border: 5px solid #f3f3f3; border-top: 5px solid #B8956A; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+    .loading-text { position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); color: #FFFFFF; font-size: 1rem; font-weight: bold; }
+    /* 🚀 スケルトンローディング */
+    .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skeleton-select { height: 48px; margin-bottom: 0.5rem; }
+    .skeleton-table { height: 300px; }
+    /* 🚀 カレンダーローディング（小さいインジケーター） */
+    .calendar-loading { display: none; text-align: center; padding: 1rem; color: #B8956A; }
+    .calendar-loading.active { display: block; }
+    .mini-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #B8956A; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+    @media screen and (max-width: 480px) {
+      html { font-size: 14px; }
+      .nav-button { padding: 0.4rem 0.5rem; font-size: 0.85rem; min-width: 70px; }
+      .time-cell, .schedule-table thead th:first-child { min-width: 38px; font-size: 0.8rem; }
+      .slot-cell { height: 35px; }
+    }
+  </style>
+</head>
+<body>
+  <header><h1>PAIX予約ページ</h1></header>
+
+  <div class="menu-section">
+    <h2>メニュー選択</h2>
+    <div id="menuCategories">
+      <div class="skeleton skeleton-select"></div>
+      <div class="skeleton skeleton-select"></div>
+      <div class="skeleton skeleton-select"></div>
+    </div>
+    <div class="total-duration">合計時間: <span id="totalDuration">0分</span></div>
+  </div>
+
+  <div class="calendar-section" id="calendarSection" style="display:none;">
+    <div class="week-navigation">
+      <button class="nav-button" id="prevWeekBtn" onclick="changeWeek(-1)">◀ 前週</button>
+      <div class="current-month" id="currentMonth"></div>
+      <button class="nav-button" id="nextWeekBtn" onclick="changeWeek(1)">次週 ▶</button>
+    </div>
+    <div class="calendar-loading" id="calendarLoading"><span class="mini-spinner"></span>読み込み中...</div>
+    <div class="schedule-wrapper">
+      <table class="schedule-table" id="scheduleTable">
+        <thead id="tableHeader"></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <p style="text-align: center; color: #999; font-size: 0.85rem; margin-top: 0.5rem;">↕️ スクロールして時間を選択</p>
+  </div>
+
+  <div class="customer-section">
+    <h2>お客様情報</h2>
+    <div class="form-group">
+      <label for="customerName">お名前<span class="required">*</span></label>
+      <input type="text" id="customerName" placeholder="山田太郎" required>
+    </div>
+    <div class="form-group">
+      <label for="phone">電話番号<span class="required">*</span></label>
+      <input type="tel" id="phone" placeholder="090-1234-5678" required>
+    </div>
+    <div class="form-group">
+      <label for="email">メールアドレス（任意）</label>
+      <input type="email" id="email" placeholder="example@example.com">
+    </div>
+  </div>
+
+  <div class="button-spacer"></div>
+  <button class="reserve-button" id="reserveButton" onclick="reserve()" disabled>予約する</button>
+
+  <div id="loadingOverlay"><div class="spinner"></div><div class="loading-text">処理中...</div></div>
+
+  <div id="confirmationModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header"><h2>予約内容の確認</h2></div>
+      <div id="confirmationDetails" class="confirmation-details"></div>
+      <div class="modal-buttons">
+        <button class="cancel-button" onclick="closeConfirmationModal()">キャンセル</button>
+        <button class="confirm-button" onclick="confirmReservation()">予約を確定する</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="completionModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header"><h2>予約完了</h2></div>
+      <div class="complete-message">
+        <p style="font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem;">ご予約ありがとうございます</p>
+        <div id="completionDetails"></div>
+        <button class="calendar-button" onclick="addToCalendar()" style="width: 100%; margin-bottom: 0.75rem;">📅 カレンダーに追加</button>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">当日のご来店をお待ちしております</p>
+      </div>
+      <button class="return-button" onclick="returnToReservationPage()">予約ページへ戻る</button>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // 🚀 設定
+    // ============================================
+    const CONFIG = {
+      API_URL: 'https://script.google.com/macros/s/AKfycbxeneCCLqCgEAupeYFGrTpYO6a8mBQ0tF_oikGRAT0pl0-0XneCbR2-O3NJ_4Jmf2ExSw/exec',
+      CLIENT_ID: 'client_' + Math.random().toString(36).substr(2, 9)
+    };
+
+    // ============================================
+    // グローバル変数
+    // ============================================
+    let selectedCourses = [];
+    let timeSlots = [];
+    let weeklyDataCache = {};  // 🚀 週ごとのキャッシュ
+    let currentWeekOffset = 0;
+    let selectedSlot = null;
+    let currentDuration = 0;
+
+    // ============================================
+    // 🚀 初期化（並列読み込み）
+    // ============================================
+    document.addEventListener('DOMContentLoaded', async () => {
+      setupEventListeners();
+      // メニューを先に読み込み（カレンダーは選択後）
+      await loadMenuCategories();
+    });
+
+    function setupEventListeners() {
+      const phoneInput = document.getElementById('phone');
+      phoneInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/[^\d]/g, '');
+        let formatted = '';
+        if (value.length > 0) {
+          if (value.startsWith('090') || value.startsWith('080') || value.startsWith('070')) {
+            if (value.length <= 3) formatted = value;
+            else if (value.length <= 7) formatted = value.slice(0, 3) + '-' + value.slice(3);
+            else formatted = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
+          } else if (value.startsWith('098')) {
+            if (value.length <= 3) formatted = value;
+            else if (value.length <= 6) formatted = value.slice(0, 3) + '-' + value.slice(3);
+            else formatted = value.slice(0, 3) + '-' + value.slice(3, 6) + '-' + value.slice(6, 10);
+          } else {
+            formatted = value.slice(0, 11);
+          }
+        }
+        e.target.value = formatted;
+      });
+      window.onclick = (event) => { if (event.target.className === "modal") event.target.style.display = "none"; };
+    }
+
+    // ============================================
+    // 🚀 API呼び出し（最適化）
+    // ============================================
+    async function callApi(action, params = {}) {
+      const url = new URL(CONFIG.API_URL);
+      url.searchParams.append('action', action);
+      url.searchParams.append('clientId', CONFIG.CLIENT_ID);
+      for (const [key, value] of Object.entries(params)) {
+        url.searchParams.append(key, value);
+      }
+      const response = await fetch(url.toString(), { method: 'GET', mode: 'cors' });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return await response.json();
+    }
+
+    async function postApi(action, data) {
+      const response = await fetch(CONFIG.API_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action, clientId: CONFIG.CLIENT_ID, ...data })
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return await response.json();
+    }
+
+    // ============================================
+    // ローディング表示
+    // ============================================
+    function showLoading() { document.getElementById('loadingOverlay').style.display = 'block'; }
+    function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+    function showCalendarLoading() { document.getElementById('calendarLoading').classList.add('active'); }
+    function hideCalendarLoading() { document.getElementById('calendarLoading').classList.remove('active'); }
+
+    // ============================================
+    // メニュー読み込み
+    // ============================================
+    async function loadMenuCategories() {
+      try {
+        const result = await callApi('getInitialData');
+        if (result.error) throw new Error(result.error);
+        timeSlots = result.timeSlots || [];
+        displayMenuCategories(result.menus);
+      } catch (error) {
+        console.error('Menu load error:', error);
+        alert('メニューの読み込みに失敗しました。ページを再読み込みしてください。');
+      }
+    }
+
+    function displayMenuCategories(categories) {
+      const container = document.getElementById("menuCategories");
+      container.innerHTML = Object.entries(categories).map(([category, menus]) => {
+        const categoryTitle = {
+          '脱毛メニュー': '<h3>脱毛メニュー</h3>',
+          '各パーツ脱毛メニュー': '<h3>各パーツ脱毛メニュー<br><small style="font-weight:normal;color:#888;">Sパーツ[鼻下/両頬/アゴ等] Mパーツ[ヒジ上下/Vライン等] Lパーツ[腕全体/足全体/背中等]</small></h3>',
+          'ホワイトニング': '<h3>セルフホワイトニング</h3>'
+        }[category] || '';
+        const options = menus.map(menu => 
+          `<option value='${JSON.stringify(menu)}'>${menu.name} (¥${menu.price.toLocaleString()} / ${menu.duration}分)</option>`
+        ).join('');
+        return `${categoryTitle}<select onchange="handleMenuSelection(this, '${category}')" required><option value="">選択してください</option>${options}</select>`;
+      }).join('');
+    }
+
+    function handleMenuSelection(select, category) {
+      selectedCourses = selectedCourses.filter(course => course.category !== category);
+      if (select.value) {
+        try { selectedCourses.push({ ...JSON.parse(select.value), category }); } 
+        catch (error) { select.value = ""; return; }
+      }
+      calculateTotalDuration();
+    }
+
+    async function calculateTotalDuration() {
+      const totalDuration = selectedCourses.reduce((sum, course) => sum + course.duration, 0);
+      document.getElementById("totalDuration").textContent = `${totalDuration}分`;
+      
+      if (totalDuration > 0) {
+        currentDuration = totalDuration;
+        // 🚀 キャッシュがあれば即座に表示、なければ取得
+        if (weeklyDataCache[currentWeekOffset] && currentDuration === weeklyDataCache[currentWeekOffset].duration) {
+          renderWeeklyCalendar();
+        } else {
+          weeklyDataCache = {};  // 時間が変わったらキャッシュクリア
+          await loadWeeklyAvailability(totalDuration, currentWeekOffset);
+        }
+        document.getElementById('calendarSection').style.display = 'block';
+      } else {
+        document.getElementById('calendarSection').style.display = 'none';
+        selectedSlot = null;
+        updateReserveButton();
+      }
+    }
+
+    // ============================================
+    // 🚀 週間カレンダー（週ごとに取得）
+    // ============================================
+    async function loadWeeklyAvailability(totalDuration, weekOffset = 0) {
+      showCalendarLoading();
+      try {
+        const data = await callApi('getWeeklyAvailability', { duration: totalDuration, weekOffset: weekOffset });
+        if (data.error) throw new Error(data.error);
+        
+        // 🚀 キャッシュに保存
+        weeklyDataCache[weekOffset] = { data: data.weeklyData, duration: totalDuration };
+        if (!timeSlots.length) timeSlots = data.timeSlots;
+        
+        renderWeeklyCalendar();
+        updateReserveButton();
+      } catch (error) {
+        console.error('Calendar load error:', error);
+        alert('カレンダーの読み込みに失敗しました。');
+      } finally {
+        hideCalendarLoading();
+      }
+    }
+
+    function renderWeeklyCalendar() {
+      const cached = weeklyDataCache[currentWeekOffset];
+      if (!cached) return;
+      
+      const weeklyData = cached.data;
+      const today = new Date();
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() + (currentWeekOffset * 7));
+
+      const weekDates = [];
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(weekStart);
+        date.setDate(weekStart.getDate() + i);
+        weekDates.push(date);
+      }
+
+      // 月表示
+      const firstDate = weekDates[0];
+      const lastDate = weekDates[6];
+      const monthText = firstDate.getMonth() === lastDate.getMonth()
+        ? `${firstDate.getFullYear()}年${firstDate.getMonth() + 1}月`
+        : `${firstDate.getFullYear()}年${firstDate.getMonth() + 1}月 - ${lastDate.getMonth() + 1}月`;
+      document.getElementById('currentMonth').textContent = monthText;
+
+      document.getElementById('prevWeekBtn').disabled = currentWeekOffset === 0;
+      document.getElementById('nextWeekBtn').disabled = currentWeekOffset >= 3;
+
+      renderTableHeader(weekDates);
+      renderTableBody(weekDates, weeklyData);
+    }
+
+    function renderTableHeader(weekDates) {
+      const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+      let html = '<tr><th></th>';
+      weekDates.forEach(date => {
+        const dayOfWeek = date.getDay();
+        const dayClass = dayOfWeek === 0 ? 'sunday' : (dayOfWeek === 6 ? 'saturday' : '');
+        html += `<th><div class="date-header"><div class="date-number">${date.getDate()}</div><div class="date-day ${dayClass}">${dayNames[dayOfWeek]}</div></div></th>`;
+      });
+      document.getElementById('tableHeader').innerHTML = html + '</tr>';
+    }
+
+    function renderTableBody(weekDates, weeklyData) {
+      let html = '';
+      timeSlots.forEach(timeSlot => {
+        html += `<tr><td class="time-cell">${timeSlot}</td>`;
+        weekDates.forEach(date => {
+          const dateKey = formatDateKey(date);
+          const dayData = weeklyData[dateKey];
+          const isAvailable = dayData && dayData[timeSlot];
+          const isSelected = selectedSlot && selectedSlot.date === dateKey && selectedSlot.time === timeSlot;
+          
+          const cellClass = isSelected ? 'selected' : (isAvailable ? 'available' : 'unavailable');
+          const iconClass = isSelected ? 'selected-icon' : (isAvailable ? 'available-icon' : 'unavailable-icon');
+          const icon = isSelected ? '●' : (isAvailable ? '〇' : '×');
+          const onclick = isAvailable ? `selectSlot('${dateKey}', '${timeSlot}')` : '';
+          
+          html += `<td class="slot-cell ${cellClass}" ${onclick ? `onclick="${onclick}"` : ''}><div class="slot-icon ${iconClass}">${icon}</div></td>`;
+        });
+        html += '</tr>';
+      });
+      document.getElementById('tableBody').innerHTML = html;
+    }
+
+    function formatDateKey(date) {
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    }
+
+    async function changeWeek(offset) {
+      const newOffset = currentWeekOffset + offset;
+      if (newOffset < 0 || newOffset > 3) return;
+      
+      currentWeekOffset = newOffset;
+      selectedSlot = null;
+      
+      // 🚀 キャッシュがあれば即座に表示
+      if (weeklyDataCache[currentWeekOffset] && weeklyDataCache[currentWeekOffset].duration === currentDuration) {
+        renderWeeklyCalendar();
+      } else {
+        await loadWeeklyAvailability(currentDuration, currentWeekOffset);
+      }
+      updateReserveButton();
+    }
+
+    function selectSlot(dateKey, timeSlot) {
+      selectedSlot = { date: dateKey, time: timeSlot };
+      renderWeeklyCalendar();
+      updateReserveButton();
+    }
+
+    function updateReserveButton() {
+      document.getElementById('reserveButton').disabled = !(selectedCourses.length > 0 && selectedSlot !== null);
+    }
+
+    // ============================================
+    // 予約処理
+    // ============================================
+    function validateForm() {
+      const customerName = document.getElementById("customerName").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      if (!customerName) { alert("お名前を入力してください"); return false; }
+      if (!phone) { alert("電話番号を入力してください"); return false; }
+      if (!selectedCourses.length) { alert("コースを選択してください"); return false; }
+      if (!selectedSlot) { alert("時間を選択してください"); return false; }
+      return true;
+    }
+
+    let isProcessingReservation = false;
+
+    function reserve() {
+      if (isProcessingReservation || !validateForm()) return;
+      isProcessingReservation = true;
+      document.getElementById('reserveButton').disabled = true;
+
+      const customerName = document.getElementById("customerName").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const hasHairRemoval = selectedCourses.some(c => c.category === '脱毛メニュー' || c.category === '各パーツ脱毛メニュー');
+      const selectedDateTime = `${selectedSlot.date.replace(/-/g, '/')} ${selectedSlot.time}`;
+
+      document.getElementById("confirmationDetails").innerHTML = `
+        <p><strong>お名前:</strong> ${customerName}</p>
+        <p><strong>電話番号:</strong> ${phone}</p>
+        <p><strong>メール:</strong> ${email || '未入力'}</p>
+        <p><strong>予約日時:</strong> ${selectedDateTime}</p>
+        <p><strong>コース:</strong></p>
+        <ul>${selectedCourses.map(c => `<li>${c.name} (${c.duration}分)</li>`).join('')}</ul>
+        <p><strong>合計時間:</strong> ${document.getElementById("totalDuration").textContent}</p>
+        ${hasHairRemoval ? '<div class="shaving-notice">※ 施術前に脱毛部分のシェービングをお願いします。</div>' : ''}
+      `;
+      document.getElementById("confirmationModal").style.display = "block";
+      setTimeout(() => { isProcessingReservation = false; document.getElementById('reserveButton').disabled = false; }, 1000);
+    }
+
+    function closeConfirmationModal() { document.getElementById("confirmationModal").style.display = "none"; }
+
+    async function confirmReservation() {
+      const customerName = document.getElementById("customerName").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const selectedDateTime = `${selectedSlot.date} ${selectedSlot.time}:00`;
+
+      document.getElementById("confirmationModal").style.display = "none";
+      showLoading();
+
+      try {
+        const result = await postApi('createReservation', {
+          selectedCourses, selectedDateTime, customerName, phone, email
+        });
+        if (result.error) throw new Error(result.error);
+        
+        // 🚀 キャッシュクリア（新しい予約を反映）
+        weeklyDataCache = {};
+        
+        displayCompletionDetails();
+        document.getElementById("completionModal").style.display = "block";
+      } catch (error) {
+        alert(error.message || 'エラーが発生しました。お電話でご予約ください。');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function displayCompletionDetails() {
+      const [year, month, day] = selectedSlot.date.split('-');
+      const date = new Date(selectedSlot.date);
+      const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+      const hasHairRemoval = selectedCourses.some(c => c.category === '脱毛メニュー' || c.category === '各パーツ脱毛メニュー');
+      
+      document.getElementById("completionDetails").innerHTML = `
+        <p><strong>予約日時:</strong><br>${year}年${parseInt(month)}月${parseInt(day)}日（${dayNames[date.getDay()]}）${selectedSlot.time}</p>
+        <p><strong>コース:</strong></p>
+        <ul>${selectedCourses.map(c => `<li>${c.name}<br><span style="font-size:0.9rem;color:#666;">${c.duration}分 / ¥${c.price.toLocaleString()}</span></li>`).join('')}</ul>
+        <p><strong>合計:</strong> ${selectedCourses.reduce((sum, c) => sum + c.duration, 0)}分 / ¥${selectedCourses.reduce((sum, c) => sum + c.price, 0).toLocaleString()}</p>
+        ${hasHairRemoval ? '<p style="color:#777;font-weight:bold;margin-top:1rem;padding:0.75rem;background:#F5F5F5;border-radius:0.375rem;font-size:0.9rem;">※ 施術前に脱毛部分のシェービングをお願いします</p>' : ''}
+      `;
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      document.querySelector('.calendar-button').style.display = isSafari ? 'block' : 'none';
+    }
+
+    function addToCalendar() {
+      const [year, month, day] = selectedSlot.date.split('-');
+      const [hour, minute] = selectedSlot.time.split(':');
+      const totalDuration = selectedCourses.reduce((sum, c) => sum + c.duration, 0);
+      const startDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute));
+      const endDate = new Date(startDate.getTime() + totalDuration * 60 * 1000);
+      
+      const formatICS = d => `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}00`;
+      const ics = ['BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT',`UID:paix-${Date.now()}`,`DTSTAMP:${formatICS(new Date())}`,`DTSTART:${formatICS(startDate)}`,`DTEND:${formatICS(endDate)}`,`SUMMARY:PAIX予約`,'LOCATION:沖縄県豊見城市座安208-2','END:VEVENT','END:VCALENDAR'].join('\r\n');
+      window.location.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
+    }
+
+    function returnToReservationPage() {
+      document.getElementById("customerName").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("email").value = "";
+      selectedCourses = [];
+      selectedSlot = null;
+      weeklyDataCache = {};
+      currentWeekOffset = 0;
+      document.querySelectorAll("#menuCategories select").forEach(s => s.value = "");
+      document.getElementById("totalDuration").textContent = "0分";
+      document.getElementById('calendarSection').style.display = 'none';
+      document.getElementById("completionModal").style.display = "none";
+      updateReserveButton();
+    }
+  </script>
+</body>
+</html>
