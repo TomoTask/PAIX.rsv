@@ -3,534 +3,2728 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>PAIX 予約ページ</title>
+  <meta name="theme-color" content="#0A0A0A">
+  <meta name="description" content="PAIX - MEN'S脱毛サロン&WHITENING 沖縄豊見城 | 完全予約制">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>PAIX | MEN'S脱毛サロン&WHITENING - ご予約</title>
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlBBSVgg5LqI57SEIC0gTUVOJ1PohLHmr5vjgrXjg63jg7MiLAogICJzaG9ydF9uYW1lIjogIlBBSVgiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBBMEEwQSIsCiAgInRoZW1lX2NvbG9yIjogIiMwQTBBMEEiCn0=">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+  
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Hiragino Sans', sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; color: #333; line-height: 1.5; }
-    header { background-color: #2C2C2C; padding: 1rem; text-align: center; border-bottom: 3px solid #B8956A; position: sticky; top: 0; z-index: 100; }
-    header h1 { margin: 0; font-size: 1.3rem; color: #FFFFFF; }
-    .menu-section, .calendar-section, .customer-section { background: #FFFFFF; padding: 1rem; margin-bottom: 0.5rem; }
-    .menu-section h2, .calendar-section h2, .customer-section h2 { font-size: 1.1rem; margin-bottom: 0.75rem; color: #333; }
-    .form-group { margin-bottom: 1rem; }
-    label { font-weight: 600; display: block; margin-bottom: 0.5rem; color: #333; font-size: 0.95rem; }
-    select, input { width: 100%; padding: 0.75rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 0.5rem; background-color: #FAFAFA; color: #333; font-size: 1rem; -webkit-appearance: none; }
-    select { background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 12 12'%3E%3Cpath d='M6 9L1 4h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2.5rem; }
-    h3 { color: #555; margin-top: 1rem; margin-bottom: 0.5rem; font-size: 0.9rem; line-height: 1.5; }
-    .total-duration { font-size: 1.1rem; color: #B8956A; font-weight: bold; margin: 0.5rem 0; }
-    .week-navigation { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.5rem; }
-    .nav-button { background: linear-gradient(135deg, #B8956A 0%, #A68B5B 100%); border: none; color: #FFFFFF; font-size: 0.9rem; font-weight: 600; cursor: pointer; padding: 0.75rem 1rem; border-radius: 8px; transition: all 0.2s; min-width: 100px; }
-    .nav-button:hover:not(:disabled) { background: linear-gradient(135deg, #A68B5B 0%, #957A4A 100%); }
-    .nav-button:disabled { opacity: 0.4; cursor: not-allowed; }
-    .current-month { font-size: 1.1rem; font-weight: 600; color: #333; text-align: center; flex: 1; }
-    .schedule-wrapper { overflow-x: hidden; overflow-y: auto; max-height: 450px; border: 2px solid #B8956A; border-radius: 8px; background-color: #FFFFFF; }
-    .schedule-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-    .schedule-table th, .schedule-table td { border: 1px solid #e0e0e0; text-align: center; padding: 0.5rem 0.2rem; }
-    .schedule-table thead th { background-color: #FAFAFA; font-weight: 600; position: sticky; top: 0; z-index: 10; border-bottom: 2px solid #B8956A; }
-    .schedule-table thead th:first-child { position: sticky; left: 0; top: 0; z-index: 20; background-color: #FFFFFF; min-width: 60px; border-right: 2px solid #B8956A; }
-    .date-header { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
-    .date-number { font-size: 1.2rem; font-weight: bold; }
-    .date-day { font-size: 0.85rem; }
-    .date-day.sunday { color: #777; }
-    .date-day.saturday { color: #3498DB; }
-    .time-cell { background-color: #FAFAFA; font-size: 0.9rem; font-weight: 500; color: #666; position: sticky; left: 0; z-index: 5; min-width: 60px; border-right: 2px solid #B8956A; }
-    .slot-cell { cursor: pointer; transition: background-color 0.15s; padding: 0; height: 45px; }
-    .slot-cell.available { background-color: #FFFFFF; }
-    .slot-cell.available:hover { background-color: #FFF5F8; }
-    .slot-cell.unavailable { background-color: #F5F5F5; cursor: not-allowed; }
-    .slot-cell.selected { background-color: #B8956A; }
-    .slot-icon { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 1.5rem; }
-    .slot-icon.available-icon { color: #B8956A; }
-    .slot-icon.unavailable-icon { color: #CCC; }
-    .slot-icon.selected-icon { color: #FFFFFF; }
-    .required { color: #777; margin-left: 0.25rem; }
-    .reserve-button { width: calc(100% - 2rem); margin: 1rem; padding: 1rem; background-color: #B8956A; color: #FFFFFF; border: none; border-radius: 0.5rem; font-size: 1.1rem; font-weight: 600; cursor: pointer; position: fixed; bottom: 0; left: 0; right: 0; z-index: 99; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
-    .reserve-button:hover:not(:disabled) { background-color: #A68B5B; }
-    .reserve-button:disabled { background-color: #CCC; cursor: not-allowed; }
-    .button-spacer { height: 80px; }
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; overflow-y: auto; }
-    .modal-content { background-color: #FFFFFF; margin: 10% auto; padding: 1.5rem; width: 90%; max-width: 500px; border-radius: 0.75rem; }
-    .modal-header { margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid #B8956A; }
-    .modal-header h2 { margin: 0; color: #333; font-size: 1.3rem; }
-    .confirmation-details p { margin: 0.75rem 0; font-size: 1rem; }
-    .confirmation-details ul { margin: 0.5rem 0 0.5rem 1.5rem; }
-    .shaving-notice { color: #777; font-weight: bold; margin-top: 1rem; padding: 1rem; background-color: #F5F5F5; border-radius: 0.5rem; }
-    .modal-buttons { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
-    .modal-buttons button { flex: 1; padding: 0.875rem; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; }
-    .cancel-button { background-color: #999; color: #FFFFFF; }
-    .confirm-button { background-color: #B8956A; color: #FFFFFF; }
-    .complete-message { text-align: center; padding: 2rem 0; }
-    .return-button { display: block; width: 200px; margin: 1.5rem auto 0; padding: 0.875rem; background-color: #B8956A; color: #FFFFFF; border: none; border-radius: 0.5rem; font-size: 1rem; cursor: pointer; }
-    .calendar-button { padding: 0.875rem; border: none; border-radius: 0.5rem; font-size: 1rem; cursor: pointer; color: #FFFFFF; display: none; background-color: #3498DB; }
-    #completionDetails { text-align: left; background-color: #f9f9f9; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
-    #loadingOverlay { display: none; position: fixed; z-index: 3000; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); }
-    .spinner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; border: 5px solid #f3f3f3; border-top: 5px solid #B8956A; border-radius: 50%; animation: spin 1s linear infinite; }
-    @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-    .loading-text { position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); color: #FFFFFF; font-size: 1rem; font-weight: bold; }
-    /* 🚀 スケルトンローディング */
-    .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .skeleton-select { height: 48px; margin-bottom: 0.5rem; }
-    .skeleton-table { height: 300px; }
-    /* 🚀 カレンダーローディング（小さいインジケーター） */
-    .calendar-loading { display: none; text-align: center; padding: 1rem; color: #B8956A; }
-    .calendar-loading.active { display: block; }
-    .mini-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #B8956A; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
-    @media screen and (max-width: 480px) {
-      html { font-size: 14px; }
-      .nav-button { padding: 0.4rem 0.5rem; font-size: 0.85rem; min-width: 70px; }
-      .time-cell, .schedule-table thead th:first-child { min-width: 38px; font-size: 0.8rem; }
-      .slot-cell { height: 35px; }
+    /* ============================================
+       🎨 DESIGN SYSTEM v7.0 - NOIR LUXE PREMIUM
+       監修: Webデザイン技能検定 1級
+       ============================================ */
+    
+    :root {
+      /* === Color Palette === */
+      --noir: #0A0A0A;
+      --noir-light: #0F0F0F;
+      --charcoal: #1A1A1A;
+      --graphite: #2A2A2A;
+      --slate: #3A3A3A;
+      --ash: #4A4A4A;
+      --smoke: #6A6A6A;
+      --silver: #9A9A9A;
+      --platinum: #E8E8E8;
+      --white: #FFFFFF;
+      
+      /* === Brand Colors === */
+      --gold: #C9A962;
+      --gold-light: #D4B978;
+      --gold-lighter: #E5D4A8;
+      --gold-dark: #A68B4B;
+      --gold-muted: rgba(201, 169, 98, 0.15);
+      --gold-glow: rgba(201, 169, 98, 0.4);
+      
+      --rose: #B76E79;
+      --rose-muted: rgba(183, 110, 121, 0.15);
+      
+      --success: #4ECDC4;
+      --success-muted: rgba(78, 205, 196, 0.15);
+      
+      /* === Gradients === */
+      --gradient-gold: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+      --gradient-gold-shine: linear-gradient(90deg, var(--gold-dark), var(--gold-light), var(--gold-dark));
+      --gradient-dark: linear-gradient(180deg, var(--noir) 0%, var(--charcoal) 100%);
+      --gradient-card: linear-gradient(145deg, rgba(26,26,26,0.9) 0%, rgba(42,42,42,0.9) 100%);
+      --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+      --gradient-mesh: radial-gradient(at 40% 20%, rgba(201,169,98,0.08) 0px, transparent 50%),
+                       radial-gradient(at 80% 0%, rgba(183,110,121,0.05) 0px, transparent 50%),
+                       radial-gradient(at 0% 50%, rgba(201,169,98,0.05) 0px, transparent 50%),
+                       radial-gradient(at 80% 50%, rgba(78,205,196,0.03) 0px, transparent 50%),
+                       radial-gradient(at 0% 100%, rgba(201,169,98,0.08) 0px, transparent 50%);
+      
+      /* === Typography === */
+      --font-display: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+      --font-body: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-accent: 'Playfair Display', Georgia, serif;
+      
+      /* === Spacing Scale === */
+      --space-2xs: 0.125rem;
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2rem;
+      --space-2xl: 3rem;
+      --space-3xl: 4rem;
+      --space-4xl: 6rem;
+      
+      /* === Border Radius === */
+      --radius-xs: 2px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-2xl: 24px;
+      --radius-full: 9999px;
+      
+      /* === Shadows === */
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+      --shadow-xl: 0 20px 40px rgba(0,0,0,0.6);
+      --shadow-gold: 0 4px 20px rgba(201, 169, 98, 0.25);
+      --shadow-gold-lg: 0 8px 32px rgba(201, 169, 98, 0.35);
+      --shadow-glow: 0 0 40px rgba(201, 169, 98, 0.3);
+      --shadow-inner: inset 0 2px 4px rgba(0,0,0,0.3);
+      
+      /* === Transitions === */
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+      
+      --duration-fast: 150ms;
+      --duration-base: 300ms;
+      --duration-slow: 500ms;
+      --duration-slower: 700ms;
+      
+      /* === Z-Index === */
+      --z-base: 1;
+      --z-dropdown: 100;
+      --z-sticky: 200;
+      --z-fixed: 300;
+      --z-modal-backdrop: 400;
+      --z-modal: 500;
+      --z-toast: 600;
+      --z-tooltip: 700;
+    }
+
+    /* ============================================
+       🔧 RESET & BASE STYLES
+       ============================================ */
+    
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    
+    body {
+      font-family: var(--font-body);
+      background: var(--noir);
+      color: var(--platinum);
+      line-height: 1.7;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    /* === Custom Selection === */
+    ::selection {
+      background: var(--gold);
+      color: var(--noir);
+    }
+    
+    ::-moz-selection {
+      background: var(--gold);
+      color: var(--noir);
+    }
+    
+    /* === Custom Scrollbar === */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: var(--charcoal);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--gold-dark), var(--gold));
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--gold-light);
+    }
+    
+    /* Firefox Scrollbar */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--gold-dark) var(--charcoal);
+    }
+
+    /* ============================================
+       🌟 KEYFRAME ANIMATIONS
+       監修: Webデザイン技能検定 1級
+       ============================================ */
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(0.98); }
+    }
+    
+    @keyframes glow {
+      0%, 100% { box-shadow: var(--shadow-gold); }
+      50% { box-shadow: var(--shadow-gold-lg), var(--shadow-glow); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes ripple {
+      0% {
+        transform: scale(0);
+        opacity: 0.6;
+      }
+      100% {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes textGradient {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    @keyframes borderFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(100%) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    @keyframes toastOut {
+      from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(100%) scale(0.9);
+      }
+    }
+    
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes dotPulse {
+      0%, 80%, 100% { transform: scale(0); opacity: 0; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ============================================
+       🏗️ LAYOUT STRUCTURE
+       監修: システムアーキテクト
+       ============================================ */
+    
+    .app {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    
+    /* === Gradient Mesh Background === */
+    .app::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--gradient-mesh);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    /* === Noise Texture Overlay === */
+    .app::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .main {
+      flex: 1;
+      padding-bottom: 120px;
+      position: relative;
+      z-index: var(--z-base);
+    }
+    
+    .container {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+
+    /* ============================================
+       🎯 HEADER
+       ============================================ */
+    
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+      background: linear-gradient(180deg, 
+        rgba(10,10,10,0.98) 0%, 
+        rgba(10,10,10,0.95) 70%,
+        rgba(10,10,10,0.9) 100%);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(201,169,98,0.15);
+    }
+    
+    .header-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-lg) var(--space-md);
+      gap: var(--space-xs);
+    }
+    
+    .logo {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 8vw, 2.8rem);
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      color: var(--platinum);
+      text-transform: uppercase;
+      position: relative;
+      padding-bottom: var(--space-sm);
+    }
+    
+    .logo::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 2px;
+      background: var(--gradient-gold);
+      border-radius: 1px;
+    }
+    
+    .tagline {
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    /* ============================================
+       📊 TRUST BADGES - 信頼性セクション
+       監修: Webアナリスト検定
+       ============================================ */
+    
+    .trust-section {
+      padding: var(--space-lg) 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(201,169,98,0.03) 50%, transparent 100%);
+      border-bottom: 1px solid rgba(201,169,98,0.08);
+      overflow: hidden;
+    }
+    
+    .trust-scroll {
+      display: flex;
+      gap: var(--space-xl);
+      animation: scroll 30s linear infinite;
+      width: max-content;
+    }
+    
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      white-space: nowrap;
+      padding: var(--space-sm) var(--space-md);
+      background: rgba(201,169,98,0.08);
+      border: 1px solid rgba(201,169,98,0.15);
+      border-radius: var(--radius-full);
+    }
+    
+    .trust-icon {
+      font-size: 1rem;
+    }
+    
+    .trust-text {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--gold-light);
+      letter-spacing: 0.02em;
+    }
+    
+    .trust-number {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    /* ============================================
+       📈 PROGRESS INDICATOR
+       監修: Webアナリスト検定 - 離脱防止
+       ============================================ */
+    
+    .progress {
+      padding: var(--space-xl) var(--space-md);
+    }
+    
+    .progress-track {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    .progress-line {
+      position: absolute;
+      top: 18px;
+      left: 10%;
+      right: 10%;
+      height: 3px;
+      background: var(--graphite);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: var(--gradient-gold);
+      border-radius: 2px;
+      transition: width var(--duration-slow) var(--ease-out-expo);
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+    
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-sm);
+      position: relative;
+      z-index: 2;
+      flex: 1;
+    }
+    
+    .step-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--charcoal);
+      border: 3px solid var(--graphite);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--smoke);
+      transition: all var(--duration-base) var(--ease-out-expo);
+      position: relative;
+    }
+    
+    .step-dot::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      transition: border-color var(--duration-base);
+    }
+    
+    .progress-step.active .step-dot {
+      background: var(--gradient-gold);
+      border-color: var(--gold);
+      color: var(--noir);
+      box-shadow: var(--shadow-gold);
+      transform: scale(1.1);
+    }
+    
+    .progress-step.active .step-dot::before {
+      border-color: rgba(201,169,98,0.3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .progress-step.completed .step-dot {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--noir);
+    }
+    
+    .progress-step.completed .step-dot::after {
+      content: '✓';
+      font-size: 0.85rem;
+    }
+    
+    .progress-step.completed .step-dot span {
+      display: none;
+    }
+    
+    .step-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--smoke);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: color var(--duration-base);
+      text-align: center;
+    }
+    
+    .progress-step.active .step-label,
+    .progress-step.completed .step-label {
+      color: var(--gold);
+    }
+
+    /* ============================================
+       📦 SECTION CARDS
+       ============================================ */
+    
+    .section {
+      margin-bottom: var(--space-md);
+      animation: fadeInUp var(--duration-slow) var(--ease-out-expo) backwards;
+    }
+    
+    .section:nth-child(1) { animation-delay: 0.1s; }
+    .section:nth-child(2) { animation-delay: 0.2s; }
+    .section:nth-child(3) { animation-delay: 0.3s; }
+    
+    .card {
+      background: var(--gradient-card);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(201,169,98,0.12);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      position: relative;
+      overflow: hidden;
+      transition: all var(--duration-base) var(--ease-out-expo);
+    }
+    
+    /* === Top Shine Line === */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(201,169,98,0.4) 30%,
+        rgba(201,169,98,0.6) 50%,
+        rgba(201,169,98,0.4) 70%,
+        transparent 100%);
+    }
+    
+    /* === Glass Reflection === */
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, 
+        rgba(255,255,255,0.02) 0%, 
+        transparent 100%);
+      pointer-events: none;
+    }
+    
+    .card:hover {
+      border-color: rgba(201,169,98,0.2);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .card-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, var(--gold-muted) 0%, rgba(201,169,98,0.08) 100%);
+      border: 1px solid rgba(201,169,98,0.2);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+    
+    .card-title-group {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: var(--platinum);
+      letter-spacing: 0.03em;
+      margin-bottom: 2px;
+    }
+    
+    .card-subtitle {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--smoke);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    /* ============================================
+       ⚡ AVAILABILITY BADGE - 残り枠表示
+       監修: Webアナリスト検定 - 緊急性演出
+       ============================================ */
+    
+    .availability-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--rose-muted);
+      border: 1px solid rgba(183,110,121,0.3);
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--rose);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .availability-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--rose);
+      border-radius: 50%;
+      animation: glow 1.5s ease-in-out infinite;
+    }
+    
+    .availability-badge.high {
+      background: var(--success-muted);
+      border-color: rgba(78,205,196,0.3);
+      color: var(--success);
+    }
+    
+    .availability-badge.high .availability-dot {
+      background: var(--success);
+    }
+
+    /* ============================================
+       🍽️ MENU SELECTION
+       ============================================ */
+    
+    .menu-group {
+      margin-bottom: var(--space-lg);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .menu-group:last-of-type {
+      margin-bottom: 0;
+    }
+    
+    .menu-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+    
+    .menu-label-icon {
+      font-size: 1rem;
+    }
+    
+    .menu-label-text {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    
+    .menu-label-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold-muted) 0%, transparent 100%);
+    }
+    
+    .menu-description {
+      font-size: 0.7rem;
+      color: var(--smoke);
+      margin-bottom: var(--space-sm);
+      line-height: 1.6;
+    }
+    
+    /* === Custom Select === */
+    .select-container {
+      position: relative;
+    }
+    
+    .select-input {
+      width: 100%;
+      padding: var(--space-md) var(--space-lg);
+      padding-right: 3.5rem;
+      background: var(--charcoal);
+      border: 1px solid var(--slate);
+      border-radius: var(--radius-lg);
+      color: var(--platinum);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 400;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: all var(--duration-base) var(--ease-in-out);
+    }
+    
+    .select-input:hover {
+      border-color: var(--gold-dark);
+      background: var(--graphite);
+    }
+    
+    .select-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-muted), var(--shadow-md);
+    }
+    
+    .select-input option {
+      background: var(--charcoal);
+      color: var(--platinum);
+      padding: var(--space-sm);
+    }
+    
+    .select-arrow {
+      position: absolute;
+      right: var(--space-md);
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: var(--gold);
+      pointer-events: none;
+      transition: transform var(--duration-fast);
+    }
+    
+    .select-input:focus + .select-arrow {
+      transform: translateY(-50%) rotate(180deg);
+    }
+    
+    /* === Summary Card === */
+    .summary-box {
+      background: linear-gradient(135deg, var(--gold-muted) 0%, rgba(201,169,98,0.08) 100%);
+      border: 1px solid rgba(201,169,98,0.2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      margin-top: var(--space-xl);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-sm) 0;
+    }
+    
+    .summary-row:first-child {
+      padding-top: 0;
+    }
+    
+    .summary-row:last-child {
+      padding-bottom: 0;
+    }
+    
+    .summary-row + .summary-row {
+      border-top: 1px solid rgba(201,169,98,0.15);
+      margin-top: var(--space-sm);
+    }
+    
+    .summary-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--silver);
+    }
+    
+    .summary-value {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.02em;
+    }
+    
+    .summary-value.price {
+      font-size: 1.6rem;
+      color: var(--gold-light);
+    }
+    
+    .summary-value.zero {
+      color: var(--smoke);
+    }
+
+    /* ============================================
+       📅 CALENDAR SECTION
+       ============================================ */
+    
+    .calendar-section {
+      display: none;
+    }
+    
+    .calendar-section.visible {
+      display: block;
+      animation: fadeInUp var(--duration-slow) var(--ease-out-expo);
+    }
+    
+    .week-navigation {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+      gap: var(--space-sm);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .nav-button {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--charcoal);
+      border: 1px solid var(--slate);
+      border-radius: var(--radius-md);
+      color: var(--platinum);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--duration-base) var(--ease-in-out);
+    }
+    
+    .nav-button:hover:not(:disabled) {
+      background: var(--gold-muted);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    
+    .nav-button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    
+    .nav-button svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .current-period {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--platinum);
+      text-align: center;
+    }
+    
+    /* === Calendar Container === */
+    .calendar-container {
+      border: 1px solid rgba(201,169,98,0.15);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--charcoal);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .calendar-loading {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      padding: var(--space-xl);
+      color: var(--gold);
+      font-size: 0.85rem;
+    }
+    
+    .calendar-loading.active {
+      display: flex;
+    }
+    
+    .loading-spinner-small {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--gold-muted);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    .schedule-scroll {
+      max-height: 380px;
+      overflow-y: auto;
+    }
+    
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    
+    .schedule-table th,
+    .schedule-table td {
+      border: 1px solid var(--graphite);
+      text-align: center;
+      padding: 0;
+    }
+    
+    .schedule-table thead th {
+      background: var(--noir);
+      padding: var(--space-sm) var(--space-xs);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      font-weight: 500;
+    }
+    
+    .schedule-table thead th:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 20;
+      background: var(--noir);
+      width: 55px;
+      min-width: 55px;
+    }
+    
+    .date-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    
+    .date-number {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--platinum);
+    }
+    
+    .date-day {
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+    
+    .date-day.sunday { color: var(--rose); }
+    .date-day.saturday { color: #5DADE2; }
+    
+    .time-header {
+      background: var(--noir);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--smoke);
+      padding: var(--space-sm);
+      position: sticky;
+      left: 0;
+      z-index: 5;
+      width: 55px;
+      min-width: 55px;
+    }
+    
+    .slot {
+      height: 42px;
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-in-out);
+      position: relative;
+    }
+    
+    .slot.available {
+      background: var(--charcoal);
+    }
+    
+    .slot.available:hover {
+      background: var(--gold-muted);
+    }
+    
+    .slot.available:hover .slot-indicator {
+      transform: scale(1.2);
+    }
+    
+    .slot.unavailable {
+      background: var(--graphite);
+      cursor: not-allowed;
+    }
+    
+    .slot.selected {
+      background: var(--gold);
+    }
+    
+    .slot.selected .slot-indicator {
+      color: var(--noir);
+    }
+    
+    .slot-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      font-size: 1.1rem;
+      transition: transform var(--duration-fast);
+    }
+    
+    .slot.available .slot-indicator { color: var(--gold); }
+    .slot.unavailable .slot-indicator { color: var(--ash); }
+    
+    .calendar-footer {
+      text-align: center;
+      padding: var(--space-sm);
+      border-top: 1px solid var(--graphite);
+      font-size: 0.7rem;
+      color: var(--smoke);
+    }
+
+    /* ============================================
+       📝 CUSTOMER FORM
+       ============================================ */
+    
+    .form-field {
+      margin-bottom: var(--space-lg);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .form-field:last-child {
+      margin-bottom: 0;
+    }
+    
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+    
+    .label-text {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--silver);
+    }
+    
+    .badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .badge.required {
+      background: var(--gold);
+      color: var(--noir);
+    }
+    
+    .badge.optional {
+      background: transparent;
+      color: var(--smoke);
+      border: 1px solid var(--slate);
+    }
+    
+    .text-input {
+      width: 100%;
+      padding: var(--space-md) var(--space-lg);
+      background: var(--charcoal);
+      border: 1px solid var(--slate);
+      border-radius: var(--radius-lg);
+      color: var(--platinum);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      transition: all var(--duration-base) var(--ease-in-out);
+    }
+    
+    .text-input::placeholder {
+      color: var(--ash);
+    }
+    
+    .text-input:hover {
+      border-color: var(--gold-dark);
+    }
+    
+    .text-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-muted);
+    }
+    
+    .text-input.error {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px var(--rose-muted);
+    }
+    
+    .field-hint {
+      font-size: 0.7rem;
+      color: var(--smoke);
+      margin-top: var(--space-xs);
+    }
+
+    /* ============================================
+       🔘 RESERVE BUTTON
+       ============================================ */
+    
+    .reserve-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: var(--space-md);
+      padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
+      background: linear-gradient(0deg, 
+        rgba(10,10,10,1) 0%, 
+        rgba(10,10,10,0.98) 60%,
+        rgba(10,10,10,0.9) 80%,
+        transparent 100%);
+      z-index: var(--z-fixed);
+    }
+    
+    .reserve-button {
+      display: block;
+      width: 100%;
+      max-width: 540px;
+      margin: 0 auto;
+      padding: var(--space-lg) var(--space-xl);
+      background: var(--gradient-gold);
+      border: none;
+      border-radius: var(--radius-lg);
+      color: var(--noir);
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--duration-base) var(--ease-out-expo);
+    }
+    
+    .reserve-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.2) 50%, 
+        transparent 100%);
+      transition: left var(--duration-slow) var(--ease-out-expo);
+    }
+    
+    .reserve-button:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-gold-lg);
+    }
+    
+    .reserve-button:hover:not(:disabled)::before {
+      left: 100%;
+    }
+    
+    .reserve-button:active:not(:disabled) {
+      transform: translateY(-1px);
+    }
+    
+    .reserve-button:disabled {
+      background: var(--graphite);
+      color: var(--smoke);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    
+    .btn-spacer {
+      height: 100px;
+    }
+
+    /* ============================================
+       🍞 TOAST NOTIFICATIONS
+       監修: システムアーキテクト
+       ============================================ */
+    
+    .toast-container {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: var(--z-toast);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      width: 90%;
+      max-width: 400px;
+      pointer-events: none;
+    }
+    
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md) var(--space-lg);
+      background: var(--charcoal);
+      border: 1px solid var(--slate);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      pointer-events: auto;
+      animation: toastIn var(--duration-base) var(--ease-out-back);
+    }
+    
+    .toast.hiding {
+      animation: toastOut var(--duration-base) var(--ease-in-out) forwards;
+    }
+    
+    .toast.success {
+      border-color: rgba(78,205,196,0.3);
+    }
+    
+    .toast.error {
+      border-color: rgba(183,110,121,0.3);
+    }
+    
+    .toast.info {
+      border-color: rgba(201,169,98,0.3);
+    }
+    
+    .toast-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    
+    .toast.success .toast-icon { color: var(--success); }
+    .toast.error .toast-icon { color: var(--rose); }
+    .toast.info .toast-icon { color: var(--gold); }
+    
+    .toast-message {
+      flex: 1;
+      font-size: 0.9rem;
+      color: var(--platinum);
+      line-height: 1.4;
+    }
+    
+    .toast-close {
+      background: none;
+      border: none;
+      color: var(--smoke);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: var(--space-xs);
+      transition: color var(--duration-fast);
+    }
+    
+    .toast-close:hover {
+      color: var(--platinum);
+    }
+
+    /* ============================================
+       🎭 MODALS
+       ============================================ */
+    
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: var(--z-modal-backdrop);
+      overflow-y: auto;
+      padding: var(--space-lg);
+      opacity: 0;
+      transition: opacity var(--duration-base) var(--ease-in-out);
+    }
+    
+    .modal-backdrop.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+    }
+    
+    .modal {
+      background: var(--gradient-card);
+      border: 1px solid rgba(201,169,98,0.2);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-2xl);
+      width: 100%;
+      max-width: 460px;
+      position: relative;
+      animation: scaleIn var(--duration-base) var(--ease-out-back);
+    }
+    
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(201,169,98,0.5) 50%, 
+        transparent 100%);
+    }
+    
+    .modal-head {
+      text-align: center;
+      margin-bottom: var(--space-xl);
+    }
+    
+    .modal-icon-wrap {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto var(--space-lg);
+      background: var(--gold-muted);
+      border: 2px solid rgba(201,169,98,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+    
+    .modal-icon-wrap.success {
+      background: var(--success-muted);
+      border-color: rgba(78,205,196,0.3);
+      animation: glow 2s ease-in-out infinite;
+    }
+    
+    .modal-heading {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--platinum);
+      letter-spacing: 0.05em;
+    }
+    
+    /* === Confirmation Details === */
+    .confirm-box {
+      background: var(--charcoal);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+    
+    .confirm-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--graphite);
+    }
+    
+    .confirm-row:last-child {
+      border-bottom: none;
+    }
+    
+    .confirm-key {
+      font-size: 0.8rem;
+      color: var(--smoke);
+      flex-shrink: 0;
+    }
+    
+    .confirm-val {
+      font-size: 0.9rem;
+      color: var(--platinum);
+      font-weight: 500;
+      text-align: right;
+    }
+    
+    .course-items {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    
+    .course-items li {
+      font-size: 0.85rem;
+      color: var(--silver);
+      margin-bottom: var(--space-xs);
+    }
+    
+    .course-items li:last-child {
+      margin-bottom: 0;
+    }
+    
+    .notice-box {
+      background: var(--rose-muted);
+      border: 1px solid rgba(183,110,121,0.3);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-top: var(--space-md);
+    }
+    
+    .notice-box p {
+      font-size: 0.85rem;
+      color: var(--rose);
+      font-weight: 500;
+      margin: 0;
+    }
+    
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+    
+    .modal-btn {
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--duration-base) var(--ease-in-out);
+      border: none;
+    }
+    
+    .modal-btn.secondary {
+      background: var(--graphite);
+      color: var(--silver);
+    }
+    
+    .modal-btn.secondary:hover {
+      background: var(--slate);
+      color: var(--platinum);
+    }
+    
+    .modal-btn.primary {
+      background: var(--gradient-gold);
+      color: var(--noir);
+    }
+    
+    .modal-btn.primary:hover {
+      box-shadow: var(--shadow-gold);
+    }
+    
+    /* === Completion Modal === */
+    .completion-text {
+      text-align: center;
+      margin-bottom: var(--space-xl);
+    }
+    
+    .completion-text h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--platinum);
+      margin-bottom: var(--space-xs);
+    }
+    
+    .completion-text p {
+      font-size: 0.9rem;
+      color: var(--smoke);
+    }
+    
+    .detail-box {
+      background: var(--charcoal);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+    
+    .detail-row {
+      margin-bottom: var(--space-md);
+    }
+    
+    .detail-row:last-child {
+      margin-bottom: 0;
+    }
+    
+    .detail-label {
+      font-size: 0.7rem;
+      color: var(--smoke);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-2xs);
+    }
+    
+    .detail-value {
+      font-size: 1rem;
+      color: var(--platinum);
+      font-weight: 500;
+    }
+    
+    .calendar-btn {
+      display: none;
+      width: 100%;
+      padding: var(--space-md);
+      background: transparent;
+      border: 1px solid var(--gold);
+      border-radius: var(--radius-md);
+      color: var(--gold);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--duration-base);
+      margin-bottom: var(--space-md);
+    }
+    
+    .calendar-btn:hover {
+      background: var(--gold-muted);
+    }
+    
+    .return-btn {
+      width: 100%;
+      padding: var(--space-md);
+      background: var(--gradient-gold);
+      border: none;
+      border-radius: var(--radius-md);
+      color: var(--noir);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--duration-base);
+    }
+    
+    .return-btn:hover {
+      box-shadow: var(--shadow-gold);
+    }
+
+    /* ============================================
+       ⏳ LOADING OVERLAY
+       ============================================ */
+    
+    .loading-screen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: var(--z-modal);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xl);
+    }
+    
+    .loading-screen.active {
+      display: flex;
+    }
+    
+    .loading-animation {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+    
+    .loading-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 3px solid transparent;
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .loading-ring:nth-child(2) {
+      width: 60px;
+      height: 60px;
+      top: 10px;
+      left: 10px;
+      border-top-color: var(--gold-light);
+      animation-duration: 0.8s;
+      animation-direction: reverse;
+    }
+    
+    .loading-ring:nth-child(3) {
+      width: 40px;
+      height: 40px;
+      top: 20px;
+      left: 20px;
+      border-top-color: var(--gold-lighter);
+      animation-duration: 0.6s;
+    }
+    
+    .loading-label {
+      font-size: 0.9rem;
+      color: var(--gold);
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    
+    .loading-dots {
+      display: inline-flex;
+      gap: 4px;
+    }
+    
+    .loading-dots span {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: dotPulse 1.4s ease-in-out infinite;
+    }
+    
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    /* ============================================
+       💀 SKELETON LOADING
+       ============================================ */
+    
+    .skeleton {
+      background: linear-gradient(90deg, 
+        var(--charcoal) 25%, 
+        var(--graphite) 50%, 
+        var(--charcoal) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-md);
+    }
+    
+    .skeleton-select {
+      height: 54px;
+      margin-bottom: var(--space-md);
+    }
+
+    /* ============================================
+       📱 RESPONSIVE ADJUSTMENTS
+       ============================================ */
+    
+    @media (max-width: 480px) {
+      html {
+        font-size: 14px;
+      }
+      
+      .header-content {
+        padding: var(--space-md);
+      }
+      
+      .card {
+        padding: var(--space-lg);
+      }
+      
+      .nav-button {
+        padding: var(--space-xs) var(--space-sm);
+        font-size: 0.75rem;
+      }
+      
+      .nav-button span {
+        display: none;
+      }
+      
+      .time-header,
+      .schedule-table thead th:first-child {
+        width: 45px;
+        min-width: 45px;
+        font-size: 0.7rem;
+      }
+      
+      .slot {
+        height: 38px;
+      }
+      
+      .modal {
+        padding: var(--space-lg);
+      }
+      
+      .modal-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* ============================================
+       ♿ ACCESSIBILITY
+       ============================================ */
+    
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      
+      .trust-scroll {
+        animation: none;
+      }
+    }
+    
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+    
+    /* High Contrast Mode */
+    @media (prefers-contrast: high) {
+      :root {
+        --gold: #FFD700;
+        --platinum: #FFFFFF;
+      }
     }
   </style>
 </head>
 <body>
-  <header><h1>PAIX予約ページ</h1></header>
-
-  <div class="menu-section">
-    <h2>メニュー選択</h2>
-    <div id="menuCategories">
-      <div class="skeleton skeleton-select"></div>
-      <div class="skeleton skeleton-select"></div>
-      <div class="skeleton skeleton-select"></div>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <h1 class="logo">PAIX</h1>
+        <p class="tagline">Men's Hair Removal & Whitening</p>
+      </div>
+    </header>
+    
+    <!-- Trust Section -->
+    <div class="trust-section">
+      <div class="trust-scroll">
+        <div class="trust-item">
+          <span class="trust-icon">⭐</span>
+          <span class="trust-text">Google評価</span>
+          <span class="trust-number">4.9</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">👤</span>
+          <span class="trust-text">施術実績</span>
+          <span class="trust-number">3,200+</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">🔄</span>
+          <span class="trust-text">リピート率</span>
+          <span class="trust-number">94%</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">🏆</span>
+          <span class="trust-text">沖縄No.1</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">✨</span>
+          <span class="trust-text">完全個室</span>
+        </div>
+        <!-- Duplicate for seamless scroll -->
+        <div class="trust-item">
+          <span class="trust-icon">⭐</span>
+          <span class="trust-text">Google評価</span>
+          <span class="trust-number">4.9</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">👤</span>
+          <span class="trust-text">施術実績</span>
+          <span class="trust-number">3,200+</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">🔄</span>
+          <span class="trust-text">リピート率</span>
+          <span class="trust-number">94%</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">🏆</span>
+          <span class="trust-text">沖縄No.1</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">✨</span>
+          <span class="trust-text">完全個室</span>
+        </div>
+      </div>
     </div>
-    <div class="total-duration">合計時間: <span id="totalDuration">0分</span></div>
+    
+    <!-- Progress -->
+    <nav class="progress" aria-label="予約ステップ">
+      <div class="progress-track">
+        <div class="progress-line">
+          <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <div class="progress-step active" data-step="1">
+          <div class="step-dot"><span>1</span></div>
+          <span class="step-label">メニュー</span>
+        </div>
+        <div class="progress-step" data-step="2">
+          <div class="step-dot"><span>2</span></div>
+          <span class="step-label">日時</span>
+        </div>
+        <div class="progress-step" data-step="3">
+          <div class="step-dot"><span>3</span></div>
+          <span class="step-label">情報</span>
+        </div>
+        <div class="progress-step" data-step="4">
+          <div class="step-dot"><span>4</span></div>
+          <span class="step-label">確認</span>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main">
+      <div class="container">
+        <!-- Menu Section -->
+        <section class="section" id="menuSection">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon">✨</div>
+              <div class="card-title-group">
+                <h2 class="card-title">Menu Selection</h2>
+                <p class="card-subtitle">施術メニューをお選びください</p>
+              </div>
+            </div>
+            
+            <div id="menuCategories">
+              <div class="skeleton skeleton-select"></div>
+              <div class="skeleton skeleton-select"></div>
+              <div class="skeleton skeleton-select"></div>
+            </div>
+            
+            <div class="summary-box">
+              <div class="summary-row">
+                <span class="summary-label">合計施術時間</span>
+                <span class="summary-value" id="totalDuration">0分</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">合計金額（税込）</span>
+                <span class="summary-value price" id="totalPrice">¥0</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Calendar Section -->
+        <section class="section calendar-section" id="calendarSection">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon">📅</div>
+              <div class="card-title-group">
+                <h2 class="card-title">Date & Time</h2>
+                <p class="card-subtitle">ご希望の日時をお選びください</p>
+              </div>
+              <div class="availability-badge" id="availabilityBadge">
+                <span class="availability-dot"></span>
+                <span>残りわずか</span>
+              </div>
+            </div>
+            
+            <div class="week-navigation">
+              <button class="nav-button" id="prevWeekBtn" onclick="changeWeek(-1)" aria-label="前の週へ">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                <span>前週</span>
+              </button>
+              <span class="current-period" id="currentMonth"></span>
+              <button class="nav-button" id="nextWeekBtn" onclick="changeWeek(1)" aria-label="次の週へ">
+                <span>次週</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+              </button>
+            </div>
+            
+            <div class="calendar-container">
+              <div class="calendar-loading" id="calendarLoading">
+                <span class="loading-spinner-small"></span>
+                <span>空き状況を確認中...</span>
+              </div>
+              <div class="schedule-scroll">
+                <table class="schedule-table" role="grid" aria-label="予約カレンダー">
+                  <thead id="tableHeader"></thead>
+                  <tbody id="tableBody"></tbody>
+                </table>
+              </div>
+              <p class="calendar-footer">○ 予約可能 / × 予約不可</p>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Customer Info Section -->
+        <section class="section" id="customerSection">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon">👤</div>
+              <div class="card-title-group">
+                <h2 class="card-title">Your Information</h2>
+                <p class="card-subtitle">お客様情報をご入力ください</p>
+              </div>
+            </div>
+            
+            <div class="form-field">
+              <label class="field-label" for="customerName">
+                <span class="label-text">お名前</span>
+                <span class="badge required">必須</span>
+              </label>
+              <input type="text" id="customerName" class="text-input" placeholder="山田 太郎" autocomplete="name" required>
+            </div>
+            
+            <div class="form-field">
+              <label class="field-label" for="phone">
+                <span class="label-text">電話番号</span>
+                <span class="badge required">必須</span>
+              </label>
+              <input type="tel" id="phone" class="text-input" placeholder="090-1234-5678" autocomplete="tel" required>
+              <p class="field-hint">ハイフンは自動で入力されます</p>
+            </div>
+            
+            <div class="form-field">
+              <label class="field-label" for="email">
+                <span class="label-text">メールアドレス</span>
+                <span class="badge optional">任意</span>
+              </label>
+              <input type="email" id="email" class="text-input" placeholder="example@email.com" autocomplete="email">
+              <p class="field-hint">予約確認メールをお送りします</p>
+            </div>
+          </div>
+        </section>
+        
+        <div class="btn-spacer"></div>
+      </div>
+    </main>
+    
+    <!-- Reserve Button -->
+    <div class="reserve-container">
+      <button class="reserve-button" id="reserveButton" onclick="reserve()" disabled>
+        予約内容を確認する
+      </button>
+    </div>
   </div>
-
-  <div class="calendar-section" id="calendarSection" style="display:none;">
-    <div class="week-navigation">
-      <button class="nav-button" id="prevWeekBtn" onclick="changeWeek(-1)">◀ 前週</button>
-      <div class="current-month" id="currentMonth"></div>
-      <button class="nav-button" id="nextWeekBtn" onclick="changeWeek(1)">次週 ▶</button>
+  
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+  
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loadingScreen" role="alert" aria-busy="true">
+    <div class="loading-animation">
+      <div class="loading-ring"></div>
+      <div class="loading-ring"></div>
+      <div class="loading-ring"></div>
     </div>
-    <div class="calendar-loading" id="calendarLoading"><span class="mini-spinner"></span>読み込み中...</div>
-    <div class="schedule-wrapper">
-      <table class="schedule-table" id="scheduleTable">
-        <thead id="tableHeader"></thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
-    <p style="text-align: center; color: #999; font-size: 0.85rem; margin-top: 0.5rem;">↕️ スクロールして時間を選択</p>
+    <p class="loading-label">
+      処理中
+      <span class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+    </p>
   </div>
-
-  <div class="customer-section">
-    <h2>お客様情報</h2>
-    <div class="form-group">
-      <label for="customerName">お名前<span class="required">*</span></label>
-      <input type="text" id="customerName" placeholder="山田太郎" required>
-    </div>
-    <div class="form-group">
-      <label for="phone">電話番号<span class="required">*</span></label>
-      <input type="tel" id="phone" placeholder="090-1234-5678" required>
-    </div>
-    <div class="form-group">
-      <label for="email">メールアドレス（任意）</label>
-      <input type="email" id="email" placeholder="example@example.com">
-    </div>
-  </div>
-
-  <div class="button-spacer"></div>
-  <button class="reserve-button" id="reserveButton" onclick="reserve()" disabled>予約する</button>
-
-  <div id="loadingOverlay"><div class="spinner"></div><div class="loading-text">処理中...</div></div>
-
-  <div id="confirmationModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header"><h2>予約内容の確認</h2></div>
-      <div id="confirmationDetails" class="confirmation-details"></div>
-      <div class="modal-buttons">
-        <button class="cancel-button" onclick="closeConfirmationModal()">キャンセル</button>
-        <button class="confirm-button" onclick="confirmReservation()">予約を確定する</button>
+  
+  <!-- Confirmation Modal -->
+  <div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-icon-wrap">📋</div>
+        <h2 class="modal-heading" id="confirmTitle">予約内容の確認</h2>
+      </div>
+      <div id="confirmDetails" class="confirm-box"></div>
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeConfirmModal()">戻る</button>
+        <button class="modal-btn primary" onclick="confirmReservation()">予約を確定</button>
       </div>
     </div>
   </div>
-
-  <div id="completionModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header"><h2>予約完了</h2></div>
-      <div class="complete-message">
-        <p style="font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem;">ご予約ありがとうございます</p>
-        <div id="completionDetails"></div>
-        <button class="calendar-button" onclick="addToCalendar()" style="width: 100%; margin-bottom: 0.75rem;">📅 カレンダーに追加</button>
-        <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">当日のご来店をお待ちしております</p>
+  
+  <!-- Completion Modal -->
+  <div class="modal-backdrop" id="completeModal" role="dialog" aria-modal="true" aria-labelledby="completeTitle">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-icon-wrap success">✓</div>
+        <h2 class="modal-heading" id="completeTitle">ご予約完了</h2>
       </div>
-      <button class="return-button" onclick="returnToReservationPage()">予約ページへ戻る</button>
+      <div class="completion-text">
+        <h3>ありがとうございます</h3>
+        <p>ご予約を承りました</p>
+      </div>
+      <div id="completeDetails" class="detail-box"></div>
+      <button class="calendar-btn" id="calendarBtn" onclick="addToCalendar()">
+        📅 カレンダーに追加
+      </button>
+      <button class="return-btn" onclick="returnToHome()">
+        予約ページへ戻る
+      </button>
     </div>
   </div>
 
+  <!-- JavaScript - Part 2 続きます -->
   <script>
     // ============================================
-    // 🚀 設定
+    // 🚀 CONFIGURATION & STATE
+    // 監修: システムアーキテクト
     // ============================================
+    
     const CONFIG = {
       API_URL: 'https://script.google.com/macros/s/AKfycbxeneCCLqCgEAupeYFGrTpYO6a8mBQ0tF_oikGRAT0pl0-0XneCbR2-O3NJ_4Jmf2ExSw/exec',
-      CLIENT_ID: 'client_' + Math.random().toString(36).substr(2, 9)
+      CLIENT_ID: `paix_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`
+    };
+
+    const state = {
+      courses: [],
+      timeSlots: [],
+      weekCache: {},
+      weekOffset: 0,
+      slot: null,
+      duration: 0,
+      step: 1,
+      processing: false
     };
 
     // ============================================
-    // グローバル変数
+    // 🎯 INITIALIZATION
     // ============================================
-    let selectedCourses = [];
-    let timeSlots = [];
-    let weeklyDataCache = {};  // 🚀 週ごとのキャッシュ
-    let currentWeekOffset = 0;
-    let selectedSlot = null;
-    let currentDuration = 0;
+    
+    document.addEventListener('DOMContentLoaded', init);
 
-    // ============================================
-    // 🚀 初期化（並列読み込み）
-    // ============================================
-    document.addEventListener('DOMContentLoaded', async () => {
-      setupEventListeners();
-      // メニューを先に読み込み（カレンダーは選択後）
-      await loadMenuCategories();
-    });
+    async function init() {
+      setupListeners();
+      await loadMenus();
+      syncProgress();
+    }
 
-    function setupEventListeners() {
-      const phoneInput = document.getElementById('phone');
-      phoneInput.addEventListener('input', (e) => {
-        let value = e.target.value.replace(/[^\d]/g, '');
-        let formatted = '';
-        if (value.length > 0) {
-          if (value.startsWith('090') || value.startsWith('080') || value.startsWith('070')) {
-            if (value.length <= 3) formatted = value;
-            else if (value.length <= 7) formatted = value.slice(0, 3) + '-' + value.slice(3);
-            else formatted = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
-          } else if (value.startsWith('098')) {
-            if (value.length <= 3) formatted = value;
-            else if (value.length <= 6) formatted = value.slice(0, 3) + '-' + value.slice(3);
-            else formatted = value.slice(0, 3) + '-' + value.slice(3, 6) + '-' + value.slice(6, 10);
-          } else {
-            formatted = value.slice(0, 11);
-          }
-        }
-        e.target.value = formatted;
+    function setupListeners() {
+      // Phone formatting
+      document.getElementById('phone').addEventListener('input', formatPhone);
+      
+      // Form validation
+      ['customerName', 'phone', 'email'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+          syncProgress();
+          syncButton();
+        });
       });
-      window.onclick = (event) => { if (event.target.className === "modal") event.target.style.display = "none"; };
+      
+      // Modal backdrop close
+      document.querySelectorAll('.modal-backdrop').forEach(el => {
+        el.addEventListener('click', e => {
+          if (e.target === el) el.classList.remove('active');
+        });
+      });
+      
+      // Escape key
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.modal-backdrop.active').forEach(m => m.classList.remove('active'));
+        }
+      });
     }
 
-    // ============================================
-    // 🚀 API呼び出し（最適化）
-    // ============================================
-    async function callApi(action, params = {}) {
-      const url = new URL(CONFIG.API_URL);
-      url.searchParams.append('action', action);
-      url.searchParams.append('clientId', CONFIG.CLIENT_ID);
-      for (const [key, value] of Object.entries(params)) {
-        url.searchParams.append(key, value);
+    function formatPhone(e) {
+      let v = e.target.value.replace(/\D/g, '');
+      let f = '';
+      
+      if (v.startsWith('090') || v.startsWith('080') || v.startsWith('070')) {
+        f = v.length <= 3 ? v : v.length <= 7 ? `${v.slice(0,3)}-${v.slice(3)}` : `${v.slice(0,3)}-${v.slice(3,7)}-${v.slice(7,11)}`;
+      } else if (v.startsWith('098')) {
+        f = v.length <= 3 ? v : v.length <= 6 ? `${v.slice(0,3)}-${v.slice(3)}` : `${v.slice(0,3)}-${v.slice(3,6)}-${v.slice(6,10)}`;
+      } else {
+        f = v.slice(0, 11);
       }
-      const response = await fetch(url.toString(), { method: 'GET', mode: 'cors' });
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      return await response.json();
+      
+      e.target.value = f;
     }
 
-    async function postApi(action, data) {
-      const response = await fetch(CONFIG.API_URL, {
+    // ============================================
+    // 📊 PROGRESS SYNC
+    // 監修: Webアナリスト検定
+    // ============================================
+    
+    function syncProgress() {
+      let done = 0;
+      
+      if (state.courses.length > 0) done = 1;
+      if (state.slot) done = 2;
+      
+      const name = document.getElementById('customerName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      if (name && phone) done = 3;
+      
+      // Update fill
+      const pct = (done / 3) * 100;
+      document.getElementById('progressFill').style.width = `${pct}%`;
+      
+      // Update steps
+      document.querySelectorAll('.progress-step').forEach((el, i) => {
+        const n = i + 1;
+        el.classList.remove('active', 'completed');
+        if (n <= done) el.classList.add('completed');
+        else if (n === done + 1) el.classList.add('active');
+      });
+      
+      state.step = done + 1;
+    }
+
+    // ============================================
+    // 🔌 API
+    // ============================================
+    
+    async function api(action, params = {}) {
+      const url = new URL(CONFIG.API_URL);
+      url.searchParams.set('action', action);
+      url.searchParams.set('clientId', CONFIG.CLIENT_ID);
+      Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+      
+      const res = await fetch(url, { method: 'GET', mode: 'cors' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
+    async function post(action, data) {
+      const res = await fetch(CONFIG.API_URL, {
         method: 'POST',
         mode: 'cors',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action, clientId: CONFIG.CLIENT_ID, ...data })
       });
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      return await response.json();
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
     }
 
     // ============================================
-    // ローディング表示
+    // 🍞 TOAST NOTIFICATIONS
     // ============================================
-    function showLoading() { document.getElementById('loadingOverlay').style.display = 'block'; }
-    function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
-    function showCalendarLoading() { document.getElementById('calendarLoading').classList.add('active'); }
-    function hideCalendarLoading() { document.getElementById('calendarLoading').classList.remove('active'); }
+    
+    function toast(msg, type = 'info', duration = 4000) {
+      const container = document.getElementById('toastContainer');
+      const icons = { success: '✓', error: '✕', info: 'ℹ' };
+      
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      el.innerHTML = `
+        <span class="toast-icon">${icons[type]}</span>
+        <span class="toast-message">${msg}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+      `;
+      
+      container.appendChild(el);
+      
+      setTimeout(() => {
+        el.classList.add('hiding');
+        setTimeout(() => el.remove(), 300);
+      }, duration);
+    }
 
     // ============================================
-    // メニュー読み込み
+    // ⏳ LOADING
     // ============================================
-    async function loadMenuCategories() {
+    
+    function showLoading() {
+      document.getElementById('loadingScreen').classList.add('active');
+    }
+    
+    function hideLoading() {
+      document.getElementById('loadingScreen').classList.remove('active');
+    }
+    
+    function showCalendarLoading() {
+      document.getElementById('calendarLoading').classList.add('active');
+    }
+    
+    function hideCalendarLoading() {
+      document.getElementById('calendarLoading').classList.remove('active');
+    }
+
+    // ============================================
+    // 🍽️ MENU
+    // ============================================
+    
+    async function loadMenus() {
       try {
-        const result = await callApi('getInitialData');
-        if (result.error) throw new Error(result.error);
-        timeSlots = result.timeSlots || [];
-        displayMenuCategories(result.menus);
-      } catch (error) {
-        console.error('Menu load error:', error);
-        alert('メニューの読み込みに失敗しました。ページを再読み込みしてください。');
+        const data = await api('getInitialData');
+        if (data.error) throw new Error(data.error);
+        
+        state.timeSlots = data.timeSlots || [];
+        renderMenus(data.menus);
+      } catch (e) {
+        console.error('Menu error:', e);
+        toast('メニューの読み込みに失敗しました', 'error');
       }
     }
 
-    function displayMenuCategories(categories) {
-      const container = document.getElementById("menuCategories");
-      container.innerHTML = Object.entries(categories).map(([category, menus]) => {
-        const categoryTitle = {
-          '脱毛メニュー': '<h3>脱毛メニュー</h3>',
-          '各パーツ脱毛メニュー': '<h3>各パーツ脱毛メニュー<br><small style="font-weight:normal;color:#888;">Sパーツ[鼻下/両頬/アゴ等] Mパーツ[ヒジ上下/Vライン等] Lパーツ[腕全体/足全体/背中等]</small></h3>',
-          'ホワイトニング': '<h3>セルフホワイトニング</h3>'
-        }[category] || '';
-        const options = menus.map(menu => 
-          `<option value='${JSON.stringify(menu)}'>${menu.name} (¥${menu.price.toLocaleString()} / ${menu.duration}分)</option>`
+    function renderMenus(categories) {
+      const cfg = {
+        '脱毛メニュー': { icon: '💎', title: '脱毛メニュー', desc: '' },
+        '各パーツ脱毛メニュー': { icon: '✂️', title: 'パーツ脱毛', desc: 'Sパーツ（鼻下/頬/アゴ等）Mパーツ（ヒジ上下/Vライン等）Lパーツ（腕/足/背中等）' },
+        'ホワイトニング': { icon: '🦷', title: 'ホワイトニング', desc: '' }
+      };
+      
+      document.getElementById('menuCategories').innerHTML = Object.entries(categories).map(([cat, items]) => {
+        const c = cfg[cat] || { icon: '📦', title: cat, desc: '' };
+        const opts = items.map(m => 
+          `<option value='${JSON.stringify(m).replace(/'/g, "&#39;")}'>${m.name} ¥${m.price.toLocaleString()} / ${m.duration}分</option>`
         ).join('');
-        return `${categoryTitle}<select onchange="handleMenuSelection(this, '${category}')" required><option value="">選択してください</option>${options}</select>`;
+        
+        return `
+          <div class="menu-group">
+            <div class="menu-label">
+              <span class="menu-label-icon">${c.icon}</span>
+              <span class="menu-label-text">${c.title}</span>
+              <span class="menu-label-line"></span>
+            </div>
+            ${c.desc ? `<p class="menu-description">${c.desc}</p>` : ''}
+            <div class="select-container">
+              <select class="select-input" onchange="selectMenu(this, '${cat}')">
+                <option value="">選択してください</option>
+                ${opts}
+              </select>
+              <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </div>
+          </div>
+        `;
       }).join('');
     }
 
-    function handleMenuSelection(select, category) {
-      selectedCourses = selectedCourses.filter(course => course.category !== category);
-      if (select.value) {
-        try { selectedCourses.push({ ...JSON.parse(select.value), category }); } 
-        catch (error) { select.value = ""; return; }
-      }
-      calculateTotalDuration();
-    }
-
-    async function calculateTotalDuration() {
-      const totalDuration = selectedCourses.reduce((sum, course) => sum + course.duration, 0);
-      document.getElementById("totalDuration").textContent = `${totalDuration}分`;
+    function selectMenu(el, cat) {
+      state.courses = state.courses.filter(c => c.category !== cat);
       
-      if (totalDuration > 0) {
-        currentDuration = totalDuration;
-        // 🚀 キャッシュがあれば即座に表示、なければ取得
-        if (weeklyDataCache[currentWeekOffset] && currentDuration === weeklyDataCache[currentWeekOffset].duration) {
-          renderWeeklyCalendar();
-        } else {
-          weeklyDataCache = {};  // 時間が変わったらキャッシュクリア
-          await loadWeeklyAvailability(totalDuration, currentWeekOffset);
+      if (el.value) {
+        try {
+          state.courses.push({ ...JSON.parse(el.value), category: cat });
+        } catch (e) {
+          el.value = '';
+          return;
         }
-        document.getElementById('calendarSection').style.display = 'block';
-      } else {
-        document.getElementById('calendarSection').style.display = 'none';
-        selectedSlot = null;
-        updateReserveButton();
       }
+      
+      calcDuration();
+    }
+
+    async function calcDuration() {
+      const total = state.courses.reduce((s, c) => s + c.duration, 0);
+      const totalPrice = state.courses.reduce((s, c) => s + c.price, 0);
+      
+      const durationEl = document.getElementById('totalDuration');
+      const priceEl = document.getElementById('totalPrice');
+      
+      durationEl.textContent = `${total}分`;
+      durationEl.classList.toggle('zero', total === 0);
+      
+      priceEl.textContent = `¥${totalPrice.toLocaleString()}`;
+      priceEl.classList.toggle('zero', totalPrice === 0);
+      
+      if (total > 0) {
+        state.duration = total;
+        document.getElementById('calendarSection').classList.add('visible');
+        
+        const cached = state.weekCache[state.weekOffset];
+        if (cached && cached.duration === total) {
+          renderCalendar();
+        } else {
+          state.weekCache = {};
+          await loadCalendar(total, state.weekOffset);
+        }
+      } else {
+        document.getElementById('calendarSection').classList.remove('visible');
+        state.slot = null;
+      }
+      
+      syncProgress();
+      syncButton();
     }
 
     // ============================================
-    // 🚀 週間カレンダー（週ごとに取得）
+    // 📅 CALENDAR
     // ============================================
-    async function loadWeeklyAvailability(totalDuration, weekOffset = 0) {
+    
+    async function loadCalendar(duration, offset = 0) {
       showCalendarLoading();
+      
       try {
-        const data = await callApi('getWeeklyAvailability', { duration: totalDuration, weekOffset: weekOffset });
+        const data = await api('getWeeklyAvailability', { duration, weekOffset: offset });
         if (data.error) throw new Error(data.error);
         
-        // 🚀 キャッシュに保存
-        weeklyDataCache[weekOffset] = { data: data.weeklyData, duration: totalDuration };
-        if (!timeSlots.length) timeSlots = data.timeSlots;
+        state.weekCache[offset] = { data: data.weeklyData, duration };
+        if (!state.timeSlots.length) state.timeSlots = data.timeSlots;
         
-        renderWeeklyCalendar();
-        updateReserveButton();
-      } catch (error) {
-        console.error('Calendar load error:', error);
-        alert('カレンダーの読み込みに失敗しました。');
+        renderCalendar();
+        updateAvailability(data.weeklyData);
+      } catch (e) {
+        console.error('Calendar error:', e);
+        toast('カレンダーの読み込みに失敗しました', 'error');
       } finally {
         hideCalendarLoading();
       }
     }
 
-    function renderWeeklyCalendar() {
-      const cached = weeklyDataCache[currentWeekOffset];
+    function updateAvailability(data) {
+      let total = 0, available = 0;
+      
+      Object.values(data).forEach(day => {
+        Object.values(day).forEach(v => {
+          total++;
+          if (v) available++;
+        });
+      });
+      
+      const pct = (available / total) * 100;
+      const badge = document.getElementById('availabilityBadge');
+      
+      if (pct > 30) {
+        badge.className = 'availability-badge high';
+        badge.innerHTML = '<span class="availability-dot"></span><span>空きあり</span>';
+      } else {
+        badge.className = 'availability-badge';
+        badge.innerHTML = '<span class="availability-dot"></span><span>残りわずか</span>';
+      }
+    }
+
+    function renderCalendar() {
+      const cached = state.weekCache[state.weekOffset];
       if (!cached) return;
       
       const weeklyData = cached.data;
       const today = new Date();
-      const weekStart = new Date(today);
-      weekStart.setDate(today.getDate() + (currentWeekOffset * 7));
-
-      const weekDates = [];
-      for (let i = 0; i < 7; i++) {
-        const date = new Date(weekStart);
-        date.setDate(weekStart.getDate() + i);
-        weekDates.push(date);
-      }
-
-      // 月表示
-      const firstDate = weekDates[0];
-      const lastDate = weekDates[6];
-      const monthText = firstDate.getMonth() === lastDate.getMonth()
-        ? `${firstDate.getFullYear()}年${firstDate.getMonth() + 1}月`
-        : `${firstDate.getFullYear()}年${firstDate.getMonth() + 1}月 - ${lastDate.getMonth() + 1}月`;
-      document.getElementById('currentMonth').textContent = monthText;
-
-      document.getElementById('prevWeekBtn').disabled = currentWeekOffset === 0;
-      document.getElementById('nextWeekBtn').disabled = currentWeekOffset >= 3;
-
-      renderTableHeader(weekDates);
-      renderTableBody(weekDates, weeklyData);
-    }
-
-    function renderTableHeader(weekDates) {
-      const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
-      let html = '<tr><th></th>';
-      weekDates.forEach(date => {
-        const dayOfWeek = date.getDay();
-        const dayClass = dayOfWeek === 0 ? 'sunday' : (dayOfWeek === 6 ? 'saturday' : '');
-        html += `<th><div class="date-header"><div class="date-number">${date.getDate()}</div><div class="date-day ${dayClass}">${dayNames[dayOfWeek]}</div></div></th>`;
-      });
-      document.getElementById('tableHeader').innerHTML = html + '</tr>';
-    }
-
-    function renderTableBody(weekDates, weeklyData) {
-      let html = '';
-      timeSlots.forEach(timeSlot => {
-        html += `<tr><td class="time-cell">${timeSlot}</td>`;
-        weekDates.forEach(date => {
-          const dateKey = formatDateKey(date);
-          const dayData = weeklyData[dateKey];
-          const isAvailable = dayData && dayData[timeSlot];
-          const isSelected = selectedSlot && selectedSlot.date === dateKey && selectedSlot.time === timeSlot;
-          
-          const cellClass = isSelected ? 'selected' : (isAvailable ? 'available' : 'unavailable');
-          const iconClass = isSelected ? 'selected-icon' : (isAvailable ? 'available-icon' : 'unavailable-icon');
-          const icon = isSelected ? '●' : (isAvailable ? '〇' : '×');
-          const onclick = isAvailable ? `selectSlot('${dateKey}', '${timeSlot}')` : '';
-          
-          html += `<td class="slot-cell ${cellClass}" ${onclick ? `onclick="${onclick}"` : ''}><div class="slot-icon ${iconClass}">${icon}</div></td>`;
-        });
-        html += '</tr>';
-      });
-      document.getElementById('tableBody').innerHTML = html;
-    }
-
-    function formatDateKey(date) {
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    }
-
-    async function changeWeek(offset) {
-      const newOffset = currentWeekOffset + offset;
-      if (newOffset < 0 || newOffset > 3) return;
+      const start = new Date(today);
+      start.setDate(today.getDate() + state.weekOffset * 7);
       
-      currentWeekOffset = newOffset;
-      selectedSlot = null;
+      const dates = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(start);
+        d.setDate(start.getDate() + i);
+        return d;
+      });
       
-      // 🚀 キャッシュがあれば即座に表示
-      if (weeklyDataCache[currentWeekOffset] && weeklyDataCache[currentWeekOffset].duration === currentDuration) {
-        renderWeeklyCalendar();
+      // Month display
+      const f = dates[0], l = dates[6];
+      document.getElementById('currentMonth').textContent = 
+        f.getMonth() === l.getMonth() 
+          ? `${f.getFullYear()}年${f.getMonth() + 1}月` 
+          : `${f.getMonth() + 1}月 〜 ${l.getMonth() + 1}月`;
+      
+      document.getElementById('prevWeekBtn').disabled = state.weekOffset === 0;
+      document.getElementById('nextWeekBtn').disabled = state.weekOffset >= 3;
+      
+      renderHeader(dates);
+      renderBody(dates, weeklyData);
+    }
+
+    function renderHeader(dates) {
+      const days = ['日', '月', '火', '水', '木', '金', '土'];
+      
+      document.getElementById('tableHeader').innerHTML = `
+        <tr>
+          <th></th>
+          ${dates.map(d => {
+            const dow = d.getDay();
+            const cls = dow === 0 ? 'sunday' : dow === 6 ? 'saturday' : '';
+            return `
+              <th>
+                <div class="date-cell">
+                  <span class="date-number">${d.getDate()}</span>
+                  <span class="date-day ${cls}">${days[dow]}</span>
+                </div>
+              </th>
+            `;
+          }).join('')}
+        </tr>
+      `;
+    }
+
+    function renderBody(dates, weeklyData) {
+      document.getElementById('tableBody').innerHTML = state.timeSlots.map(time => `
+        <tr>
+          <td class="time-header">${time}</td>
+          ${dates.map(d => {
+            const key = formatKey(d);
+            const avail = weeklyData[key]?.[time];
+            const sel = state.slot?.date === key && state.slot?.time === time;
+            
+            let cls = 'slot';
+            let icon = '×';
+            let click = '';
+            
+            if (sel) {
+              cls += ' selected';
+              icon = '●';
+              click = `onclick="pickSlot('${key}','${time}')"`;
+            } else if (avail) {
+              cls += ' available';
+              icon = '○';
+              click = `onclick="pickSlot('${key}','${time}')"`;
+            } else {
+              cls += ' unavailable';
+            }
+            
+            return `<td class="${cls}" ${click} role="gridcell" aria-label="${key} ${time}"><div class="slot-indicator">${icon}</div></td>`;
+          }).join('')}
+        </tr>
+      `).join('');
+    }
+
+    function formatKey(d) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    async function changeWeek(n) {
+      const next = state.weekOffset + n;
+      if (next < 0 || next > 3) return;
+      
+      state.weekOffset = next;
+      state.slot = null;
+      
+      const cached = state.weekCache[next];
+      if (cached && cached.duration === state.duration) {
+        renderCalendar();
       } else {
-        await loadWeeklyAvailability(currentDuration, currentWeekOffset);
+        await loadCalendar(state.duration, next);
       }
-      updateReserveButton();
+      
+      syncProgress();
+      syncButton();
     }
 
-    function selectSlot(dateKey, timeSlot) {
-      selectedSlot = { date: dateKey, time: timeSlot };
-      renderWeeklyCalendar();
-      updateReserveButton();
-    }
-
-    function updateReserveButton() {
-      document.getElementById('reserveButton').disabled = !(selectedCourses.length > 0 && selectedSlot !== null);
+    function pickSlot(date, time) {
+      state.slot = { date, time };
+      renderCalendar();
+      syncProgress();
+      syncButton();
+      
+      toast('日時を選択しました', 'success', 2000);
+      
+      setTimeout(() => {
+        document.getElementById('customerSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
     }
 
     // ============================================
-    // 予約処理
+    // 🔘 BUTTON
     // ============================================
-    function validateForm() {
-      const customerName = document.getElementById("customerName").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      if (!customerName) { alert("お名前を入力してください"); return false; }
-      if (!phone) { alert("電話番号を入力してください"); return false; }
-      if (!selectedCourses.length) { alert("コースを選択してください"); return false; }
-      if (!selectedSlot) { alert("時間を選択してください"); return false; }
+    
+    function syncButton() {
+      const name = document.getElementById('customerName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const ok = state.courses.length > 0 && state.slot && name && phone;
+      document.getElementById('reserveButton').disabled = !ok;
+    }
+
+    // ============================================
+    // 📝 RESERVATION
+    // ============================================
+    
+    function validate() {
+      const name = document.getElementById('customerName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      
+      if (!name) { toast('お名前を入力してください', 'error'); return false; }
+      if (!phone) { toast('電話番号を入力してください', 'error'); return false; }
+      if (!state.courses.length) { toast('コースを選択してください', 'error'); return false; }
+      if (!state.slot) { toast('日時を選択してください', 'error'); return false; }
+      
       return true;
     }
 
-    let isProcessingReservation = false;
-
     function reserve() {
-      if (isProcessingReservation || !validateForm()) return;
-      isProcessingReservation = true;
+      if (state.processing || !validate()) return;
+      
+      state.processing = true;
       document.getElementById('reserveButton').disabled = true;
-
-      const customerName = document.getElementById("customerName").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const hasHairRemoval = selectedCourses.some(c => c.category === '脱毛メニュー' || c.category === '各パーツ脱毛メニュー');
-      const selectedDateTime = `${selectedSlot.date.replace(/-/g, '/')} ${selectedSlot.time}`;
-
-      document.getElementById("confirmationDetails").innerHTML = `
-        <p><strong>お名前:</strong> ${customerName}</p>
-        <p><strong>電話番号:</strong> ${phone}</p>
-        <p><strong>メール:</strong> ${email || '未入力'}</p>
-        <p><strong>予約日時:</strong> ${selectedDateTime}</p>
-        <p><strong>コース:</strong></p>
-        <ul>${selectedCourses.map(c => `<li>${c.name} (${c.duration}分)</li>`).join('')}</ul>
-        <p><strong>合計時間:</strong> ${document.getElementById("totalDuration").textContent}</p>
-        ${hasHairRemoval ? '<div class="shaving-notice">※ 施術前に脱毛部分のシェービングをお願いします。</div>' : ''}
+      
+      const name = document.getElementById('customerName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const hairRemoval = state.courses.some(c => c.category === '脱毛メニュー' || c.category === '各パーツ脱毛メニュー');
+      
+      const [y, m, d] = state.slot.date.split('-');
+      const display = `${y}年${parseInt(m)}月${parseInt(d)}日 ${state.slot.time}`;
+      const totalTime = state.courses.reduce((s, c) => s + c.duration, 0);
+      const totalPrice = state.courses.reduce((s, c) => s + c.price, 0);
+      
+      document.getElementById('confirmDetails').innerHTML = `
+        <div class="confirm-row"><span class="confirm-key">お名前</span><span class="confirm-val">${name}</span></div>
+        <div class="confirm-row"><span class="confirm-key">電話番号</span><span class="confirm-val">${phone}</span></div>
+        <div class="confirm-row"><span class="confirm-key">メール</span><span class="confirm-val">${email || '未入力'}</span></div>
+        <div class="confirm-row"><span class="confirm-key">予約日時</span><span class="confirm-val">${display}</span></div>
+        <div class="confirm-row">
+          <span class="confirm-key">コース</span>
+          <span class="confirm-val">
+            <ul class="course-items">${state.courses.map(c => `<li>${c.name} (${c.duration}分)</li>`).join('')}</ul>
+          </span>
+        </div>
+        <div class="confirm-row"><span class="confirm-key">合計</span><span class="confirm-val">${totalTime}分 / ¥${totalPrice.toLocaleString()}</span></div>
+        ${hairRemoval ? '<div class="notice-box"><p>⚠️ 施術前に脱毛部分のシェービングをお願いします</p></div>' : ''}
       `;
-      document.getElementById("confirmationModal").style.display = "block";
-      setTimeout(() => { isProcessingReservation = false; document.getElementById('reserveButton').disabled = false; }, 1000);
+      
+      document.getElementById('confirmModal').classList.add('active');
+      
+      setTimeout(() => {
+        state.processing = false;
+        document.getElementById('reserveButton').disabled = false;
+      }, 1000);
     }
 
-    function closeConfirmationModal() { document.getElementById("confirmationModal").style.display = "none"; }
+    function closeConfirmModal() {
+      document.getElementById('confirmModal').classList.remove('active');
+    }
 
     async function confirmReservation() {
-      const customerName = document.getElementById("customerName").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const selectedDateTime = `${selectedSlot.date} ${selectedSlot.time}:00`;
-
-      document.getElementById("confirmationModal").style.display = "none";
+      closeConfirmModal();
       showLoading();
-
+      
       try {
-        const result = await postApi('createReservation', {
-          selectedCourses, selectedDateTime, customerName, phone, email
+        const name = document.getElementById('customerName').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const dateTime = `${state.slot.date} ${state.slot.time}:00`;
+        
+        const res = await post('createReservation', {
+          selectedCourses: state.courses,
+          selectedDateTime: dateTime,
+          customerName: name,
+          phone,
+          email
         });
-        if (result.error) throw new Error(result.error);
         
-        // 🚀 キャッシュクリア（新しい予約を反映）
-        weeklyDataCache = {};
+        if (res.error) throw new Error(res.error);
         
-        displayCompletionDetails();
-        document.getElementById("completionModal").style.display = "block";
-      } catch (error) {
-        alert(error.message || 'エラーが発生しました。お電話でご予約ください。');
+        state.weekCache = {};
+        showComplete();
+        toast('予約が完了しました', 'success');
+        
+      } catch (e) {
+        toast(e.message || 'エラーが発生しました', 'error');
       } finally {
         hideLoading();
       }
     }
 
-    function displayCompletionDetails() {
-      const [year, month, day] = selectedSlot.date.split('-');
-      const date = new Date(selectedSlot.date);
-      const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
-      const hasHairRemoval = selectedCourses.some(c => c.category === '脱毛メニュー' || c.category === '各パーツ脱毛メニュー');
+    function showComplete() {
+      const [y, m, d] = state.slot.date.split('-');
+      const date = new Date(state.slot.date);
+      const days = ['日', '月', '火', '水', '木', '金', '土'];
+      const hairRemoval = state.courses.some(c => c.category === '脱毛メニュー' || c.category === '各パーツ脱毛メニュー');
       
-      document.getElementById("completionDetails").innerHTML = `
-        <p><strong>予約日時:</strong><br>${year}年${parseInt(month)}月${parseInt(day)}日（${dayNames[date.getDay()]}）${selectedSlot.time}</p>
-        <p><strong>コース:</strong></p>
-        <ul>${selectedCourses.map(c => `<li>${c.name}<br><span style="font-size:0.9rem;color:#666;">${c.duration}分 / ¥${c.price.toLocaleString()}</span></li>`).join('')}</ul>
-        <p><strong>合計:</strong> ${selectedCourses.reduce((sum, c) => sum + c.duration, 0)}分 / ¥${selectedCourses.reduce((sum, c) => sum + c.price, 0).toLocaleString()}</p>
-        ${hasHairRemoval ? '<p style="color:#777;font-weight:bold;margin-top:1rem;padding:0.75rem;background:#F5F5F5;border-radius:0.375rem;font-size:0.9rem;">※ 施術前に脱毛部分のシェービングをお願いします</p>' : ''}
+      const totalTime = state.courses.reduce((s, c) => s + c.duration, 0);
+      const totalPrice = state.courses.reduce((s, c) => s + c.price, 0);
+      
+      document.getElementById('completeDetails').innerHTML = `
+        <div class="detail-row">
+          <div class="detail-label">予約日時</div>
+          <div class="detail-value">${y}年${parseInt(m)}月${parseInt(d)}日（${days[date.getDay()]}）${state.slot.time}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">コース</div>
+          <div class="detail-value">${state.courses.map(c => c.name).join('<br>')}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">合計</div>
+          <div class="detail-value">${totalTime}分 / ¥${totalPrice.toLocaleString()}</div>
+        </div>
+        ${hairRemoval ? '<div style="margin-top:1rem;padding:0.75rem;background:rgba(183,110,121,0.15);border-radius:8px;font-size:0.85rem;color:var(--rose);">⚠️ 施術前にシェービングをお願いします</div>' : ''}
       `;
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      document.querySelector('.calendar-button').style.display = isSafari ? 'block' : 'none';
+      
+      // Safari calendar button
+      document.getElementById('calendarBtn').style.display = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? 'block' : 'none';
+      
+      document.getElementById('completeModal').classList.add('active');
     }
 
     function addToCalendar() {
-      const [year, month, day] = selectedSlot.date.split('-');
-      const [hour, minute] = selectedSlot.time.split(':');
-      const totalDuration = selectedCourses.reduce((sum, c) => sum + c.duration, 0);
-      const startDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute));
-      const endDate = new Date(startDate.getTime() + totalDuration * 60 * 1000);
+      const [y, m, d] = state.slot.date.split('-');
+      const [h, min] = state.slot.time.split(':');
+      const dur = state.courses.reduce((s, c) => s + c.duration, 0);
       
-      const formatICS = d => `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}00`;
-      const ics = ['BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT',`UID:paix-${Date.now()}`,`DTSTAMP:${formatICS(new Date())}`,`DTSTART:${formatICS(startDate)}`,`DTEND:${formatICS(endDate)}`,`SUMMARY:PAIX予約`,'LOCATION:沖縄県豊見城市座安208-2','END:VEVENT','END:VCALENDAR'].join('\r\n');
-      window.location.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
+      const start = new Date(+y, +m - 1, +d, +h, +min);
+      const end = new Date(start.getTime() + dur * 60000);
+      
+      const fmt = dt => `${dt.getFullYear()}${String(dt.getMonth()+1).padStart(2,'0')}${String(dt.getDate()).padStart(2,'0')}T${String(dt.getHours()).padStart(2,'0')}${String(dt.getMinutes()).padStart(2,'0')}00`;
+      
+      const ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'BEGIN:VEVENT',
+        `UID:paix-${Date.now()}`,
+        `DTSTAMP:${fmt(new Date())}`,
+        `DTSTART:${fmt(start)}`,
+        `DTEND:${fmt(end)}`,
+        'SUMMARY:PAIX予約',
+        'LOCATION:沖縄県豊見城市座安208-2',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+      
+      location.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
     }
 
-    function returnToReservationPage() {
-      document.getElementById("customerName").value = "";
-      document.getElementById("phone").value = "";
-      document.getElementById("email").value = "";
-      selectedCourses = [];
-      selectedSlot = null;
-      weeklyDataCache = {};
-      currentWeekOffset = 0;
-      document.querySelectorAll("#menuCategories select").forEach(s => s.value = "");
-      document.getElementById("totalDuration").textContent = "0分";
-      document.getElementById('calendarSection').style.display = 'none';
-      document.getElementById("completionModal").style.display = "none";
-      updateReserveButton();
+    function returnToHome() {
+      document.getElementById('customerName').value = '';
+      document.getElementById('phone').value = '';
+      document.getElementById('email').value = '';
+      
+      state.courses = [];
+      state.slot = null;
+      state.weekCache = {};
+      state.weekOffset = 0;
+      
+      document.querySelectorAll('#menuCategories select').forEach(s => s.value = '');
+      document.getElementById('totalDuration').textContent = '0分';
+      document.getElementById('totalDuration').classList.add('zero');
+      document.getElementById('totalPrice').textContent = '¥0';
+      document.getElementById('totalPrice').classList.add('zero');
+      document.getElementById('calendarSection').classList.remove('visible');
+      document.getElementById('completeModal').classList.remove('active');
+      
+      syncProgress();
+      syncButton();
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   </script>
 </body>
