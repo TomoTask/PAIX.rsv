@@ -706,7 +706,7 @@
     }
     
     .card-subtitle {
-      font-size: 0.94rem;
+      font-size: 0.95rem;
       font-weight: 500;
       color: var(--smoke);
       text-transform: uppercase;
@@ -776,7 +776,7 @@
     }
     
     .menu-label-text {
-      font-size: 0.8rem;
+      font-size: 1rem;
       font-weight: 600;
       color: var(--gold);
       text-transform: uppercase;
@@ -790,7 +790,7 @@
     }
     
     .menu-description {
-      font-size: 0.94rem;
+      font-size: 0.95rem;
       color: var(--platinum);
       margin-bottom: var(--space-sm);
       line-height: 1.6;
@@ -1597,26 +1597,6 @@
       font-weight: 500;
     }
     
-    .calendar-btn {
-      display: none;
-      width: 100%;
-      padding: var(--space-md);
-      background: transparent;
-      border: 1px solid var(--gold);
-      border-radius: var(--radius-md);
-      color: var(--gold);
-      font-family: var(--font-body);
-      font-size: 0.95rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all var(--duration-base);
-      margin-bottom: var(--space-md);
-    }
-    
-    .calendar-btn:hover {
-      background: var(--gold-muted);
-    }
-    
     .return-btn {
       width: 100%;
       padding: var(--space-md);
@@ -1845,7 +1825,7 @@
         <div class="trust-item">
           <span class="trust-icon">⭐</span>
           <span class="trust-text">Google評価</span>
-          <span class="trust-number">5.0</span>
+          <span class="trust-number">4.9</span>
         </div>
         <div class="trust-item">
           <span class="trust-icon">👤</span>
@@ -1856,6 +1836,10 @@
           <span class="trust-icon">🔄</span>
           <span class="trust-text">リピート率</span>
           <span class="trust-number">94%</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">🏆</span>
+          <span class="trust-text">沖縄No.1</span>
         </div>
         <div class="trust-item">
           <span class="trust-icon">✨</span>
@@ -1865,7 +1849,7 @@
         <div class="trust-item">
           <span class="trust-icon">⭐</span>
           <span class="trust-text">Google評価</span>
-          <span class="trust-number">5.0</span>
+          <span class="trust-number">4.9</span>
         </div>
         <div class="trust-item">
           <span class="trust-icon">👤</span>
@@ -1876,6 +1860,10 @@
           <span class="trust-icon">🔄</span>
           <span class="trust-text">リピート率</span>
           <span class="trust-number">94%</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">🏆</span>
+          <span class="trust-text">沖縄No.1</span>
         </div>
         <div class="trust-item">
           <span class="trust-icon">✨</span>
@@ -1918,7 +1906,7 @@
             <div class="card-header">
               <div class="card-icon">✨</div>
               <div class="card-title-group">
-                <h2 class="card-title">メニュー選択</h2>
+                <h2 class="card-title">メニューを選択</h2>
                 <p class="card-subtitle">施術メニューをお選びください</p>
               </div>
             </div>
@@ -1948,7 +1936,7 @@
             <div class="card-header">
               <div class="card-icon">📅</div>
               <div class="card-title-group">
-                <h2 class="card-title">予約希望日</h2>
+                <h2 class="card-title">ご希望日時を選択</h2>
                 <p class="card-subtitle">ご希望の日時をお選びください</p>
               </div>
               <div class="availability-badge" id="availabilityBadge">
@@ -1995,7 +1983,7 @@
             <div class="card-header">
               <div class="card-icon">👤</div>
               <div class="card-title-group">
-                <h2 class="card-title">お客様情報</h2>
+                <h2 class="card-title">予約情報を入力</h2>
                 <p class="card-subtitle">お客様情報をご入力ください</p>
               </div>
             </div>
@@ -2087,9 +2075,6 @@
         <p>ご予約を承りました</p>
       </div>
       <div id="completeDetails" class="detail-box"></div>
-      <button class="calendar-btn" id="calendarBtn" onclick="addToCalendar()">
-        📅 カレンダーに追加
-      </button>
       <button class="return-btn" onclick="returnToHome()">
         予約ページへ戻る
       </button>
@@ -2230,6 +2215,17 @@
     }
 
     // ============================================
+    // 🔒 SECURITY - HTML ESCAPE
+    // ============================================
+    
+    function escapeHtml(str) {
+      if (str == null) return '';
+      const div = document.createElement('div');
+      div.textContent = String(str);
+      return div.innerHTML;
+    }
+
+    // ============================================
     // 🍞 TOAST NOTIFICATIONS
     // ============================================
     
@@ -2239,11 +2235,23 @@
       
       const el = document.createElement('div');
       el.className = `toast ${type}`;
-      el.innerHTML = `
-        <span class="toast-icon">${icons[type]}</span>
-        <span class="toast-message">${msg}</span>
-        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
-      `;
+      
+      const iconSpan = document.createElement('span');
+      iconSpan.className = 'toast-icon';
+      iconSpan.textContent = icons[type];
+      
+      const msgSpan = document.createElement('span');
+      msgSpan.className = 'toast-message';
+      msgSpan.textContent = msg;
+      
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'toast-close';
+      closeBtn.textContent = '×';
+      closeBtn.onclick = () => el.remove();
+      
+      el.appendChild(iconSpan);
+      el.appendChild(msgSpan);
+      el.appendChild(closeBtn);
       
       container.appendChild(el);
       
@@ -2298,21 +2306,21 @@
       };
       
       document.getElementById('menuCategories').innerHTML = Object.entries(categories).map(([cat, items]) => {
-        const c = cfg[cat] || { icon: '📦', title: cat, desc: '' };
+        const c = cfg[cat] || { icon: '📦', title: escapeHtml(cat), desc: '' };
         const opts = items.map(m => 
-          `<option value='${JSON.stringify(m).replace(/'/g, "&#39;")}'>${m.name} ¥${m.price.toLocaleString()} / ${m.duration}分</option>`
+          `<option value='${JSON.stringify(m).replace(/'/g, "&#39;")}'>${escapeHtml(m.name)} ¥${Number(m.price).toLocaleString()} / ${escapeHtml(m.duration)}分</option>`
         ).join('');
         
         return `
           <div class="menu-group">
             <div class="menu-label">
               <span class="menu-label-icon">${c.icon}</span>
-              <span class="menu-label-text">${c.title}</span>
+              <span class="menu-label-text">${escapeHtml(c.title)}</span>
               <span class="menu-label-line"></span>
             </div>
-            ${c.desc ? `<p class="menu-description">${c.desc}</p>` : ''}
+            ${c.desc ? `<p class="menu-description">${escapeHtml(c.desc)}</p>` : ''}
             <div class="select-container">
-              <select class="select-input" onchange="selectMenu(this, '${cat}')">
+              <select class="select-input" onchange="selectMenu(this, '${escapeHtml(cat)}')">
                 <option value="">選択してください</option>
                 ${opts}
               </select>
@@ -2580,17 +2588,17 @@
       const totalPrice = state.courses.reduce((s, c) => s + c.price, 0);
       
       document.getElementById('confirmDetails').innerHTML = `
-        <div class="confirm-row"><span class="confirm-key">お名前</span><span class="confirm-val">${name}</span></div>
-        <div class="confirm-row"><span class="confirm-key">電話番号</span><span class="confirm-val">${phone}</span></div>
-        <div class="confirm-row"><span class="confirm-key">メール</span><span class="confirm-val">${email || '未入力'}</span></div>
-        <div class="confirm-row"><span class="confirm-key">予約日時</span><span class="confirm-val">${display}</span></div>
+        <div class="confirm-row"><span class="confirm-key">お名前</span><span class="confirm-val">${escapeHtml(name)}</span></div>
+        <div class="confirm-row"><span class="confirm-key">電話番号</span><span class="confirm-val">${escapeHtml(phone)}</span></div>
+        <div class="confirm-row"><span class="confirm-key">メール</span><span class="confirm-val">${escapeHtml(email) || '未入力'}</span></div>
+        <div class="confirm-row"><span class="confirm-key">予約日時</span><span class="confirm-val">${escapeHtml(display)}</span></div>
         <div class="confirm-row">
           <span class="confirm-key">コース</span>
           <span class="confirm-val">
-            <ul class="course-items">${state.courses.map(c => `<li>${c.name} (${c.duration}分)</li>`).join('')}</ul>
+            <ul class="course-items">${state.courses.map(c => `<li>${escapeHtml(c.name)} (${escapeHtml(c.duration)}分)</li>`).join('')}</ul>
           </span>
         </div>
-        <div class="confirm-row"><span class="confirm-key">合計</span><span class="confirm-val">${totalTime}分 / ¥${totalPrice.toLocaleString()}</span></div>
+        <div class="confirm-row"><span class="confirm-key">合計</span><span class="confirm-val">${escapeHtml(totalTime)}分 / ¥${totalPrice.toLocaleString()}</span></div>
         ${hairRemoval ? '<div class="notice-box"><p>⚠️ 施術前に脱毛部分のシェービングをお願いします</p></div>' : ''}
       `;
       
@@ -2649,21 +2657,18 @@
       document.getElementById('completeDetails').innerHTML = `
         <div class="detail-row">
           <div class="detail-label">予約日時</div>
-          <div class="detail-value">${y}年${parseInt(m)}月${parseInt(d)}日（${days[date.getDay()]}）${state.slot.time}</div>
+          <div class="detail-value">${escapeHtml(y)}年${parseInt(m)}月${parseInt(d)}日（${days[date.getDay()]}）${escapeHtml(state.slot.time)}</div>
         </div>
         <div class="detail-row">
           <div class="detail-label">コース</div>
-          <div class="detail-value">${state.courses.map(c => c.name).join('<br>')}</div>
+          <div class="detail-value">${state.courses.map(c => escapeHtml(c.name)).join('<br>')}</div>
         </div>
         <div class="detail-row">
           <div class="detail-label">合計</div>
-          <div class="detail-value">${totalTime}分 / ¥${totalPrice.toLocaleString()}</div>
+          <div class="detail-value">${escapeHtml(totalTime)}分 / ¥${totalPrice.toLocaleString()}</div>
         </div>
         ${hairRemoval ? '<div style="margin-top:1rem;padding:0.75rem;background:rgba(183,110,121,0.15);border-radius:8px;font-size:0.85rem;color:var(--rose);">⚠️ 施術前にシェービングをお願いします</div>' : ''}
       `;
-      
-      // Safari calendar button
-      document.getElementById('calendarBtn').style.display = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? 'block' : 'none';
       
       document.getElementById('completeModal').classList.add('active');
     }
